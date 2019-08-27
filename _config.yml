@@ -4,10 +4,11 @@
 
 # Site
 title: Salamander的博客
-subtitle:
-description:
-keywords:
+subtitle: Salamander的博客
+description: 一个简单的博客
+keywords: 博客 Salamander 算法 云计算 Docker k8s MySQL MongoDB
 author: Salamander
+avatar: https://avatars3.githubusercontent.com/u/16663435?s=460&v=4
 language: zh-Hans
 timezone: Asia/Shanghai
 
