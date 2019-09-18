@@ -99,6 +99,12 @@ nvidia-smi
 
 
 ### 安装CUDA10.1
+CUDA是什么？  
+>> CUDA，Compute Unified Device Architecture的简称，是由NVIDIA公司创立的基于他们公司生产的图形处理器GPUs（Graphics Processing Units,可以通俗的理解为显卡）的一个并行计算平台和编程模型。
+        通过CUDA，GPUs可以很方便地被用来进行通用计算（有点像在CPU中进行的数值计算等等）。在没有CUDA之前，GPUs一般只用来进行图形渲染（如通过OpenGL，DirectX）。
+        
+   
+
 下载[地址](https://developer.nvidia.com/cuda-downloads)，选择对应版本的cuda安装包，我这里选择的是`runfile`类型的，不要选择使用`deb`版本，**安装CUDA时一定使用runfile文件，这样可以进行选择不再安装驱动**。
 
 ![img](https://s2.ax1x.com/2019/09/18/n76jhV.png)
@@ -157,7 +163,3 @@ sudo ln -sf libcudnn.so.5.0.5 libcudnn.so.5
 sudo ln -sf libcudnn.so.5 libcudnn.so
 sudo ldconfig
 ```
-
-
-
-
