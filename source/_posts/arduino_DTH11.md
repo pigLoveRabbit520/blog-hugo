@@ -1,7 +1,11 @@
 title: Arduino使用DHT11测量温湿度
 author: Salamander
-date: 2019-08-30 10:37:06
 tags:
+  - arduino
+  - 传感器
+categories:
+  - 单片机
+date: 2019-08-30 10:37:00
 ---
 ## 概览
 这篇文章很简单（就是一点电工知识），就是利用[DHT11](https://baike.baidu.com/item/DHT11/1206271)温湿度传感器测量温湿度值，并把结果显示在[1602 LCD](https://baike.baidu.com/item/LCD1602/6014393)显示器上。
