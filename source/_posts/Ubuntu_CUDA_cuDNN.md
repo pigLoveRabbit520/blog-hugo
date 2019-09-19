@@ -26,7 +26,7 @@ date: 2019-09-18 16:00:00
 ```
 将下列代码增加到blacklist.conf文件的末尾：
 ```
- blacklist vga16fb
+blacklist vga16fb
 
 blacklist nouveau
 
@@ -80,7 +80,8 @@ sudo ./NVIDIA-Linux-x86_64-430.50.run --no-opengl-files
 
 后面两个参数可不加。  
 
-安装驱动中注意，**pre-installation failed**这个没什么关系，之后的无法在32位上安装也没关系，都选ok，在询问是否修改x-configuration，请选择默认的**no**，选择yes会导致重启后无法进入系统。
+
+安装驱动中注意，**pre-install script failed**这个提示没什么关系，之后的warning提示**unable to find a suitable destination to install 32-bit compatibility libraries**也没关系，都选ok，在询问是否修改x-configuration，请选择默认的**no**，选择yes会导致重启后无法进入系统。
 
 
 ### 使用nvidia-smi命令测试
@@ -94,7 +95,7 @@ nvidia-smi
 
 ![image](https://s2.ax1x.com/2019/09/18/n7y6I0.png)
 
-若出现上图中的结果则说明英伟达驱动安装驱动成功。
+若出现上图中的结果则说明英伟达驱动安装成功。
 
 
 
