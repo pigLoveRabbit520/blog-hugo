@@ -1,4 +1,4 @@
-title: Ubuntu上安装NVidia显卡驱动和CUDA和cuDNN库
+title: Ubuntu上安装NVIDIA显卡驱动和CUDA和cuDNN库
 author: Salamander
 tags:
   - NVI
