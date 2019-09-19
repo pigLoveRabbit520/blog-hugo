@@ -137,7 +137,13 @@ sudo make
 ```
 如果输出如下类似信息，说明CUDA安装成功：
 
-![](https://s2.ax1x.com/2019/09/18/n72x9P.png)
+![img](https://s2.ax1x.com/2019/09/18/n72x9P.png)
+
+在CUDA安装之后，我们其实已经可以用PyTorch判断是否支持GPU了，进入python控制台：
+```
+import torch
+print(torch.cuda.is_available())
+```
 
 
 ### 安装cuDNN
@@ -159,8 +165,13 @@ cd ..
 cd lib64
 sudo cp lib* /usr/local/cuda/lib64/    #复制动态链接库
 cd /usr/local/cuda/lib64/
-sudo chmod +r libcudnn.so.5.0.5
-sudo ln -sf libcudnn.so.5.0.5 libcudnn.so.5
-sudo ln -sf libcudnn.so.5 libcudnn.so
+sudo chmod +r libcudnn.so.7.6.2
+sudo ln -sf libcudnn.so.7.6.2 libcudnn.so.7
+sudo ln -sf libcudnn.so.7 libcudnn.so
 sudo ldconfig
 ```
+
+
+参考文章：
+* https://blog.csdn.net/oTengYue/article/details/79506758
+* https://shomy.top/2016/12/29/gpu-tensorflow-install
