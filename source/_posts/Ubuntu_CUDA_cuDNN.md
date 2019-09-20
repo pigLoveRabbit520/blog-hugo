@@ -50,7 +50,7 @@ lsmod | grep nouveau
 ```
 
 
-### 安装驱动
+### 安装显卡驱动
 在NVIDIA官方选择对应驱动，然后[下载](https://www.geforce.com/drivers)：
 
 ![图片](https://s2.ax1x.com/2019/09/18/n7DK2Q.png)
@@ -145,9 +145,17 @@ import torch
 print(torch.cuda.is_available())
 ```
 
+### CUDA与cuDNN的关系
+cuDNN是GPU加速计算深层神经网络的库。把CUDA看作是一个工作台，上面配有很多工具，如锤子、螺丝刀等。cuDNN是基于CUDA的深度学习GPU加速库，有了它才能在GPU上完成深度学习的计算。它就相当于工作的工具，比如它就是个扳手。但是CUDA这个工作台买来的时候，并没有送扳手。想要在CUDA上运行深度神经网络，就要安装cuDNN，就像你想要拧个螺帽就要把扳手买回来。这样才能使GPU进行深度神经网络的工作，工作速度相较CPU快很多。
+
+
 
 ### 安装cuDNN
-cuDNN是GPU加速计算深层神经网络的库。首先去[官网](https://developer.nvidia.com/rdp/cudnn-archive)下载cuDNN，需要注册一个账号才能下载。注意要选择对应版本的**cuDNN Library for Linux**（与CUDA 10.1对应）： 
+[官方安装cuDNN指南](https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#install-linux)  
+从官方安装指南可以看出，只要把**cuDNN文件复制到CUDA的对应文件夹**里就可以，即是所谓插入式设计，把cuDNN数据库添加CUDA里，cuDNN是CUDA的扩展计算库，不会对CUDA造成其他影响。
+![官方安装cuDNN指南](https://s2.ax1x.com/2019/09/20/njMwDK.png)
+
+首先去[官网](https://developer.nvidia.com/rdp/cudnn-archive)下载cuDNN，需要注册一个账号才能下载。注意要选择对应版本的**cuDNN Library for Linux**（与CUDA 10.1对应）： 
 
 ![img](https://s2.ax1x.com/2019/09/18/n7W98x.png)
 下载后进行解压：
@@ -163,11 +171,12 @@ sudo cp cudnn.h /usr/local/cuda/include  #复制头文件
 ```
 cd ..
 cd lib64
-sudo cp lib* /usr/local/cuda/lib64/    #复制动态链接库
+sudo cp libcudnn* /usr/local/cuda/lib64/    #复制动态链接库
 cd /usr/local/cuda/lib64/
 sudo chmod +r libcudnn.so.7.6.2
 sudo ln -sf libcudnn.so.7.6.2 libcudnn.so.7
 sudo ln -sf libcudnn.so.7 libcudnn.so
+sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
 sudo ldconfig
 ```
 
@@ -175,3 +184,4 @@ sudo ldconfig
 参考文章：
 * https://blog.csdn.net/oTengYue/article/details/79506758
 * https://shomy.top/2016/12/29/gpu-tensorflow-install
+* [简书——CUDA与cuDNN](https://www.jianshu.com/p/622f47f94784)
