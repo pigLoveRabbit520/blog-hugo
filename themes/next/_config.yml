@@ -816,6 +816,6 @@ version: 5.1.4
 # utterances 
 utterances:
   enable: true
-  repo: https://github.com/salamander-mh/blog_comment # owner/repo
+  repo: salamander-mh/blog_comment # owner/repo
   issue_term: pathname   # pathname, url, title
   theme: github-light    # github-light or github-dark
