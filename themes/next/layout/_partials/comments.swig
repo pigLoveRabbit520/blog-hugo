@@ -61,6 +61,11 @@
         <div id="gitment-container"></div>
       {% endif %}
     </div>
+  
+  {% elseif theme.utterances.enable %}
+    <div class="comments" id="comments">
+        {% include '../_third-party/comments/utterances.swig' %}
+    </div>
 
   {% elseif theme.valine.appid and theme.valine.appkey %}
     <div class="comments" id="comments">
