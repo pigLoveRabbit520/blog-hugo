@@ -77,3 +77,91 @@ date: 2019-08-19 17:02:00
 10. 接着是数字2，输出。遍历结束，依次弹出栈中元素，最后总表达式为8 7 2 3 \* - 2 + 3 \* + 10 2 / +。
 
 ![过程](https://s2.ax1x.com/2019/08/28/moXELQ.jpg)
+
+### 代码示例
+```
+// 预先生成运算符的tokens
+prepareTokens() {
+    this.tokens = [
+        new Token('#', TOKEN_TYPE.ENDEXPR),
+        new Token('(', TOKEN_TYPE.LEFTPAREN),
+        new Token(')', TOKEN_TYPE.RIGHTPAREN),
+        new Token('~', TOKEN_TYPE.UNARYOP, 6),       // 负号
+        new Token('abs', TOKEN_TYPE.UNARYOP, 6),     // 求绝对值
+        new Token('sqrt', TOKEN_TYPE.UNARYOP, 6),    // 开平方根
+        new Token('exp', TOKEN_TYPE.UNARYOP, 6),     // e的x次
+        new Token('ln', TOKEN_TYPE.UNARYOP, 6),      // e为底数的对数
+        new Token('log10', TOKEN_TYPE.UNARYOP, 6),   // 10为底数的对数
+        new Token('sin', TOKEN_TYPE.UNARYOP, 6),     // 求sin x
+        new Token('cos', TOKEN_TYPE.UNARYOP, 6),     // 求cos x
+        new Token('tan', TOKEN_TYPE.UNARYOP, 6),     // 求tan x
+        new Token('+', TOKEN_TYPE.BINARYOP, 4),      // 二元+
+        new Token('-', TOKEN_TYPE.BINARYOP, 4),      // 二元-
+        new Token('*', TOKEN_TYPE.BINARYOP, 5),      // 乘法
+        new Token('/', TOKEN_TYPE.BINARYOP, 5),      // 除法
+        new Token('%', TOKEN_TYPE.BINARYOP, 5),      // 除模取余
+        new Token('^', TOKEN_TYPE.BINARYOP, 6),      // 指数运算
+    ]
+}
+
+/**
+ * 中缀表达式转化为后缀表达式
+ * @return {Array}
+ */
+transform() {
+    const postExp = []
+    const opStack = []
+    for (let i = 0; i < this.infixExp.length; i++) {
+        const pos = this.infixExp[i]
+        const token = this.tokens[pos]
+        switch (token.type) {
+            case TOKEN_TYPE.OPRAND:
+                postExp.push(pos)
+                break;
+            case TOKEN_TYPE.LEFTPAREN:  // “(”直接入栈
+                opStack.push(pos)
+                break;
+            case TOKEN_TYPE.RIGHTPAREN: // 为“)”，出栈直到遇到运算符“(”
+                let prePos = opStack.pop()
+                while (prePos in this.tokens && opStack.length >= 0 &&
+                this.tokens[prePos].type !== TOKEN_TYPE.LEFTPAREN) {
+                    postExp.push(prePos)
+                    prePos = opStack.pop()
+                }
+                break;
+            case TOKEN_TYPE.UNARYOP:
+            case TOKEN_TYPE.BINARYOP:
+                let endright = 0
+                while (endright === 0) {
+                    if (opStack.length <= 0)
+                        endright = 1
+                    else if (this.tokens[opStack[opStack.length - 1]].type === TOKEN_TYPE.LEFTPAREN) {
+                        endright = 1
+                    } else if (this.tokens[opStack[opStack.length - 1]].priority < token.priority) {
+                        endright = 1
+                    } else if (this.tokens[opStack[opStack.length - 1]].priority === token.priority &&
+                                token.priority === MAX_PRIORITY) {
+                        endright = 1
+                    } else {
+                        postExp.push(opStack.pop())
+                        endright = 0
+                    }
+                }
+                opStack.push(pos)
+                break
+            case TOKEN_TYPE.ENDEXPR:
+                while (opStack.length >= 1) {
+                    postExp.push(opStack.pop())
+                }
+                break
+            default:
+                break
+        }
+    }
+
+    postExp.push(0)  // 添加终止符
+    return postExp
+}
+
+```
+中缀表达式`infixExp`中存的是`this.tokens`中的索引，完整代码[Github](https://github.com/salamander-mh/calculator)
