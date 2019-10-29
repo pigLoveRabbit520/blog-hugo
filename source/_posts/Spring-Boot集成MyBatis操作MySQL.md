@@ -14,6 +14,13 @@ date: 2019-10-27 19:05:00
 * 注解版集成
 * XML版本集成
 
+注解方式集成比较简洁，本文就不作介绍。  
+XML集成是比较老的集成方式，以前配SSM（Spring+SpringMVC+MyBatis）用的就是这种方式。
+
+
+
+<!-- more -->
+
 XML版本为老式的配置集成方式，重度集成XML文件，SQL语句也是全部写在XML中的；注解版版本，相对来说比较简约，不需要XML配置，只需要使用注解和代码来操作数据。
 ## 准备
 启动MySQL服务  
@@ -176,10 +183,8 @@ public class HomeController {
     }
 }
 ```
-好了，访问链接http://localhost:8080/user/wang，就会输出`wang`这个用户的数据
+好了，访问链接`http://localhost:8080/user/wang`，就会输出`wang`这个用户的数据
 
 
 
 项目代码[下载](http://file.51lucy.com/SpringBootDemo.zip)
-
-
