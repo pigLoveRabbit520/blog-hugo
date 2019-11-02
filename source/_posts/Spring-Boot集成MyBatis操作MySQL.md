@@ -14,14 +14,12 @@ date: 2019-10-27 19:05:00
 * 注解版集成
 * XML版本集成
 
-注解方式集成比较简洁，本文就不作介绍。  
-XML集成是比较老的集成方式，以前配SSM（Spring+SpringMVC+MyBatis）用的就是这种方式。
+XML版本为老式的配置集成方式，重度集成XML文件，SQL语句也是全部写在XML中的，我以前配SSM（Spring+SpringMVC+MyBatis）用的就是这种方式；注解版版本，相对来说比较简约，不需要XML配置，只需要使用注解和代码来操作数据，本文这里不作介绍（其实挺好学的）。 
 
 
 
 <!-- more -->
 
-XML版本为老式的配置集成方式，重度集成XML文件，SQL语句也是全部写在XML中的；注解版版本，相对来说比较简约，不需要XML配置，只需要使用注解和代码来操作数据。
 ## 准备
 启动MySQL服务  
 创建数据库`spring_db`
@@ -106,6 +104,8 @@ public class User implements Serializable {
 ```
 public interface UserDao {
     User findByName(String name);
+    
+    int insertUser(User user);
 }
 ```
 
@@ -158,6 +158,12 @@ mybatis.mapper-locations=classpath:mybatis/mapper/*.xml
         from  user
         where name = #{name}
     </select>
+    
+    <insert id="insertUser" parameterType="com.salamander.springbootdemo.entity.User">
+        insert into user(name, age, address, created_time) VALUES (
+        #{name}, #{age}, #{address}, #{createdDatetime}
+        )
+    </insert>
 </mapper>
 ```
 
@@ -181,9 +187,20 @@ public class HomeController {
     public User getUser(@PathVariable(name = "username") String name) {
         return userDao.findByName(name);
     }
+    
+    @RequestMapping("/user/add/{username}")
+    @ResponseBody
+    public String addUser(@PathVariable(name = "username") String name) {
+        User user = new User();
+        user.setName(name);
+        user.setAge(20);
+        user.setCreatedDatetime(new Date());
+        userDao.insertUser(user);
+        return "insert succesfully";
+    }
 }
 ```
-好了，访问链接`http://localhost:8080/user/wang`，就会输出`wang`这个用户的数据
+好了，访问链接`http://localhost:8080/user/wang`，就会输出`wang`这个用户的数据，而访问`http://localhost:8080/user/add/zhao`,会添加一条name为`zhao`的数据到数据库。
 
 
 
