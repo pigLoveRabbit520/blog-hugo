@@ -14,7 +14,7 @@ date: 2019-10-27 19:05:00
 * 注解版集成
 * XML版本集成
 
-XML版本为老式的配置集成方式，重度集成XML文件，SQL语句也是全部写在XML中的，我以前配SSM（Spring+SpringMVC+MyBatis）用的就是这种方式；注解版版本，相对来说比较简约，不需要XML配置，只需要使用注解和代码来操作数据，本文这里不作介绍（其实挺好学的）。 
+XML版本为老式的配置集成方式，重度集成XML文件，SQL语句也是全部写在XML中的，我以前配SSM（Spring+SpringMVC+MyBatis）用的就是这种方式；注解版版本，相对来说比较简约，不需要XML配置，只需要使用注解和代码来操作数据，本文这里不作介绍（其实挺好学的，^_^）。 
 
 
 
@@ -202,6 +202,101 @@ public class HomeController {
 ```
 好了，访问链接`http://localhost:8080/user/wang`，就会输出`wang`这个用户的数据，而访问`http://localhost:8080/user/add/zhao`,会添加一条name为`zhao`的数据到数据库。
 
+
+## 事务支持
+
+在SpringBoot中开启事务非常简单，只需在业务层添加事务注解(`@Transactional`)即可快速开启事务。好的，让我们来尝试一下。   
+在上面的使用中，我们是直接把`Dao`类在控制层中使用的，但一般情况下，我们是在业务层中使用`Dao`类的。  
+在`com.salamander.springbootdemo`下新建`Service`的package，之后创建`接口`UserService：
+```
+package com.salamander.springbootdemo.service;
+
+public interface UserService {
+    void addUsers(String name) throws Exception;
+}
+```
+之后在`impl`的子package中添加实现类`UserServiceImpl`：
+```
+
+package com.salamander.springbootdemo.service.impl;
+
+import com.salamander.springbootdemo.dao.UserDao;
+import com.salamander.springbootdemo.entity.User;
+import com.salamander.springbootdemo.service.UserService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Date;
+
+@Service
+public class UserServiceImpl implements UserService {
+    @Resource
+    private UserDao userDao;
+
+
+    @Transactional
+    @Override
+    public void addUsers(String name) throws Exception {
+        int num = 5;
+        for (int i = 0; i < num; i++) {
+            User user = getNewUser(name + (i + 1));
+            userDao.insertUser(user);
+            if (i == 3) {
+                throw new Exception("发生内部错误了");
+            }
+        }
+    }
+
+    private User getNewUser(String name) {
+        User user = new User();
+        user.setName(name);
+        user.setAge(20);
+        user.setCreatedDatetime(new Date());
+        return user;
+    }
+}
+```
+然后我们在`HomeController`中注入`UserService`，并添加路由
+```
+@Resource
+private UserService userService;
+
+@RequestMapping("/users/add/{username}")
+@ResponseBody
+public String addUsers(@PathVariable(name = "username") String name) {
+    try {
+        userService.addUsers(name);
+        return "batch insert succesfully";
+    } catch (Exception e) {
+        return e.getMessage();
+    }
+}
+
+```
+
+可以看到，我们在`addUsers`方法上添加了`@Transactional`注解开启了事务，并在插入第4条数据后抛出了异常。好了，让我们访问链接`http://localhost:8080/users/add/sun`，我们发现数据库多出了四条`name`为`sun`的数据，**回滚并没有起效果**  
+![](https://s2.ax1x.com/2019/11/03/KXiGOe.png)
+
+这是一个常见的坑点，因为`Spring`的默认的事务规则是遇到**运行异常**（`RuntimeException`及其子类）和程序错误（Error）才会进行事务回滚，而`Exception`是基类就不行了，让我们看下Java的异常类层次图  
+![](https://s2.ax1x.com/2019/11/03/KXkgGq.jpg)
+如果想针对检测异常进行事务回滚，可以在`@Transactional`注解里使用
+`rollbackFor`属性明确指定异常（或者你可以自己定义一个继承`RuntimeException`的类，然后抛出这个类）。  
+现在`addUsers`改成这样，就可以正常回滚了：
+```
+@Transactional(rollbackFor = Exception.class)
+@Override
+public void addUsers(String name) throws Exception {
+    int num = 5;
+    for (int i = 0; i < num; i++) {
+        User user = getNewUser(name + (i + 1));
+        userDao.insertUser(user);
+        if (i == 3) {
+            throw new Exception("发生内部错误了");
+        }
+    }
+}
+```
 
 
 项目代码[下载](http://file.51lucy.com/SpringBootDemo.zip)
