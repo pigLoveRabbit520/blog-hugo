@@ -8,10 +8,12 @@ categories:
   - ci
 date: 2019-11-07 20:00:00
 ---
-
 ## jenkins是什么？
   Jenkins是一个开源的、提供友好操作界面的持续集成(CI)工具，起源于Hudson（Hudson是商用的），主要用于持续、自动的构建/测试软件项目、监控外部任务的运行。Jenkins用Java语言编写，可在Tomcat等流行的servlet容器中运行，也可独立运行。通常与版本管理工具(SCM)、构建工具结合使用。常用的版本控制工具有SVN、GIT，构建工具有Maven、Ant、Gradle。  
 上面的介绍是抄的（逃，简单讲，就是Jenkins能帮我们**自动编译，测试，发布软件**。
+
+<!-- more -->
+
 
 ## 安装运行
 Jenkins有单独的war包，通过`java -jar jenkins.war`直接就可以运行（[官网下载](https://jenkins.io/zh/download/)，选择`Generic Java package (.war)`，或者[官方镜像](http://mirrors.jenkins.io/)），选择LTS Releases	中的`war-stable`），但是jre环境，当然对于熟悉Java的人来说，这个是配置一下即可。本文介绍在Docker中运行Jenkins以及会遇到的一些问题。  
