@@ -66,3 +66,17 @@ services:
       - 127.0.0.1:8080:8080
       - 50000:50000
 ```
+现在我们就可以启动Jenkins了，打开终端，键入命令：
+```
+docker-compose up
+```
+这时候，我们会遇到错误：
+```
+jenkins_1  | touch: cannot touch '/var/jenkins_home/copy_reference_file.log': Permission denied
+jenkins_1  | Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permissions?
+```
+看描述是**权限问题**，观察一下目录下的`data`文件夹：
+```
+drwxr-xr-x  2 root       root       4096 11月 17 20:47 data
+```
+发现目录的属主是`root`用户，这是什么原因呢？
