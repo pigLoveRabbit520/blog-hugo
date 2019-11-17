@@ -80,3 +80,29 @@ jenkins_1  | Can not write to /var/jenkins_home/copy_reference_file.log. Wrong v
 drwxr-xr-x  2 root       root       4096 11月 17 20:47 data
 ```
 发现目录的属主是`root`用户，这是什么原因呢？
+
+## 原因探究
+查看`Jenkins`容器的当前用户和目录`/var/jenkins_home`属主，我们发现当前用户是`Jenkins`，`/var/jenkins_home`属主用户是`jenkins`：
+```
+docker run -ti --rm --entrypoint="/bin/bash"  jenkins/jenkins:lts  -c "whoami && id"
+jenkins
+uid=1000(jenkins) gid=1000(jenkins) groups=1000(jenkins)
+
+docker run -ti --rm --entrypoint="/bin/bash" jenkins/jenkins:lts -c "ls -la /var"
+drwxr-xr-x 1 root    root    4096 Oct 17 08:29 cache
+drwxr-xr-x 2 jenkins jenkins 4096 Nov 17 14:05 jenkins_home
+
+```
+上述命令中，`--rm`选项是让容器退出时自动清除，`--entrypoint`是覆盖镜像中的`ENTRYPOINT`。  
+现在我们知道了，因为`/var/jenkins_home`映射到本地数据卷时，目录的拥有者变成了root用户，所以出现了`Permission denied`的问题。  
+发现问题之后，相应的解决方法也很简单：把当前目录的拥有者赋值给uid 1000，再启动"jenkins"容器就一切正常了。
+```
+sudo chown -R 1000:1000 data
+```
+这时利用浏览器访问 "http://localhost:8080/" 就可以看到Jenkins的经典Web界面了。
+
+
+
+
+参考：
+* [谈谈 Docker Volume 之权限管理（一）](https://yq.aliyun.com/articles/53990)
