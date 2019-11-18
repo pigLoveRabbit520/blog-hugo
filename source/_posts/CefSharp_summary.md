@@ -121,9 +121,26 @@ myChrome.RequestHandler = new CustomRequestHandler();
 
 ![detail](https://s2.ax1x.com/2019/11/16/MBE5Dg.png)
 
+### 添加自定义查询参数
+上面的例子中，我们添加了自定义的header，如果我们想改写`URL`添加一些自定义的查询参数呢，譬如`name=foo`？这里有个坑，如果我们简单地把`request.Url += "?name=foo"`，这样会导致无限重定向（因为改了Url就会重定向）。解决方法也很简单，就是判断一下我们想要的查询参数是否已经在`Url`里了：
+```
+protected override CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
+{
+    var headers = request.Headers;
+    headers["Custom-Header"] = "My Custom Header";
+    request.Headers = headers;
 
+    if (!request.Url.Contains("name=foo"))
+    {
+        request.Url += "?" + "name=foo";
+    }
 
+    return CefReturnValue.Continue;
+}
+```
 
+### 添加自定义Body
+未完待续。。。
 
 
 
