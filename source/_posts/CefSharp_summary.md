@@ -9,7 +9,7 @@ categories:
 date: 2019-11-16 20:00:00
 ---
 ## CefSharp
-CefSharp全称：**Chromium Embedded Framework**。  
+Cef全称：**Chromium Embedded Framework**。  
 CefSharp是什么？[官网](http://cefsharp.github.io/)上它是这么写的：CefSharp是在C#或VB.NET应用程序中嵌入全功能标准兼容web浏览器的最简单方法。CefSharp有WinForms和WPF应用程序的浏览器控件，也有自动化项目的无标题（屏幕外）版本。CefSharp基于Chromium嵌入式框架，这是Google Chrome的开源版本。  
 说白了，就是**可编程浏览器**。
 
