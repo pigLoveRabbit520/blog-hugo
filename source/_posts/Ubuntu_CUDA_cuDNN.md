@@ -57,7 +57,7 @@ lsmod | grep nouveau
 
 在安装驱动之前，应该卸载原有的NVIDIA驱动程序
 ```
-sudo apt-get remove –purge nvidia*
+sudo apt-get remove --purge nvidia*
 ```
 把下载的驱动放到用户目录下，我这里下载文件为`NVIDIA-Linux-x86_64-430.50.run`  
 为了安装新的NVIDIA驱动程序，我们需要停止当前的显示服务器。最简单的方法是使用telinit命令更改为运行级别3。执行以下linux命令后，显示服务器将停止，因此请确保在继续之前保存所有当前工作（如果有）：
@@ -72,11 +72,11 @@ chmod a+x NVIDIA-Linux-x86_64-430.50.run
 ```
 sudo ./NVIDIA-Linux-x86_64-430.50.run --no-opengl-files
 ```
-注意，**–no-opengl-files**参数必须加否则会循环登录，也就是loop login  
+注意，**--no-opengl-files**参数必须加否则会循环登录，也就是loop login  
 参数介绍：
-* –no-opengl-files 只安装驱动文件，不安装OpenGL文件。这个参数最重要
-* –no-x-check 安装驱动时不检查X服务
-* –no-nouveau-check 安装驱动时不检查nouveau
+* --no-opengl-files 只安装驱动文件，不安装OpenGL文件。这个参数最重要
+* --no-x-check 安装驱动时不检查X服务
+* --no-nouveau-check 安装驱动时不检查nouveau
 
 后面两个参数可不加。  
 
