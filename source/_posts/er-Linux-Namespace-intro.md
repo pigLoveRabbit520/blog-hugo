@@ -3,7 +3,8 @@ author: Salamander
 date: 2019-11-28 16:10:23
 tags:
 ---
-![](https://s2.ax1x.com/2019/11/28/Qi3I5d.png)
+![docker logo](/images/docker-logo.png)
+
 
 本文环境：
 * OS：Ubuntu 18.04.3 LTS
