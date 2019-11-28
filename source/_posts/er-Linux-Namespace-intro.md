@@ -3,13 +3,17 @@ author: Salamander
 date: 2019-11-28 16:10:23
 tags:
 ---
+![](https://s2.ax1x.com/2019/11/28/Qi3I5d.png)
+
 本文环境：
 * OS：Ubuntu 18.04.3 LTS
 * 内核版本： 5.0.0-36-generic 
 
 ## Linux Namespaces
 Docker的所用的两个关键技术，一个是`Namespaces`，一个是`Cgroups`。它俩都不是新技术，Linux内核很早就支持，但是Docker把它们有机地结合起来，加上自己创新，使得现在容器技术非常流行。  
-`Linux Namespaces`其实是做到了进程之间全局资源的隔离，譬如，`UTS Namespace`隔离了Hostname空间。这意味着在新的`UTS Namespace`中的进程，可以拥有不同于宿主机的主机名。  
+`Linux Namespaces`其实是做到了进程之间全局资源的隔离，譬如，`UTS Namespace`隔离了Hostname空间。这意味着在新的`UTS Namespace`中的进程，可以拥有不同于宿主机的主机名。 
+
+<!-- more -->
 
 目前Linux内核主要实现了以下几种不同的资源`Namespace`：
 
