@@ -108,6 +108,7 @@ int setns(int fd, int nstype);
 和`clone()`函数一样，C 语言库中的`setns()`函数也是对`setns系统调用`的封装。  
 * fd：表示要加入 namespace 的文件描述符。它是一个指向 /proc/[pid]/ns 目录中文件的文件描述符，可以通过直接打开该目录下的链接文件或者打开一个挂载了该目录下链接文件的文件得到。
 * nstype：参数 nstype 让调用者可以检查 fd 指向的 namespace 类型是否符合实际要求。若把该参数设置为 0 表示不检查。
+
 #### unshare：让进程加入新的Namespace
 ```
 #define _GNU_SOURCE
@@ -182,6 +183,7 @@ int main(int argc, char *argv[])
 * 通过`clone()`创建出一个子进程，并设置启动时的参数
 * 在子进程中调用 execv 来执行 /bin/bash，等待用户进行交互
 * 子进程退出之后，父进程也跟着退出
+
 我们可以用`ls -l /proc/$$/ns`查看当前进程所在命名空间的信息，运行程序：
 ```
 lucy@lucy-computer:~$ gcc container.c -o container
@@ -212,7 +214,8 @@ lrwxrwxrwx 1 lucy lucy 0 11月 28 15:39 pid_for_children -> 'pid:[4026531836]'
 lrwxrwxrwx 1 lucy lucy 0 11月 28 15:39 user -> 'user:[4026531837]'
 lrwxrwxrwx 1 lucy lucy 0 11月 28 15:39 uts -> 'uts:[4026531838]'
 ```
-各类命名空间id都是一样，因为我们只是单单使用了`clone`，未设置要隔离的命名空间，现在，我们加入`UTS Namespace`隔离，`UTS namespace` 功能最简单，它只隔离了 hostname 和 NIS domain name 两个资源。同一个 namespace 里面的进程看到的 hostname 和 domain name 是相同的，这两个值可以通过 `sethostname(2)` 和 `setdomainname(2)` 来进行设置，也可以通过 `uname(2)`、`gethostname(2)` 和 `getdomainname(2)` 来读取。  
+各类命名空间id都是一样，因为我们只是单单使用了`clone`，未设置要隔离的命名空间，现在，我们加入`UTS Namespace`隔离，`UTS namespace` 功能最简单，它只隔离了 hostname 和 NIS domain name 两个资源。  
+同一个 namespace 里面的进程看到的 hostname 和 domain name 是相同的，这两个值可以通过 `sethostname(2)` 和 `setdomainname(2)` 来进行设置，也可以通过 `uname(2)`、`gethostname(2)` 和 `getdomainname(2)` 来读取。    
 **注意**： UTS 的名字来自于`uname`函数用到的结构体`struct utsname`，这个结构体的名字源自于`UNIX Time-sharing System`。  
 代码主要修改两个地方：clone 的参数加上了 CLONE_NEWUTS，子进程函数中使用`sethostname`来设置 hostname。  
 
