@@ -166,7 +166,7 @@ protected override CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBr
 
 ![detail](https://s2.ax1x.com/2019/11/30/QVjqp9.png)
 
-### 加载本地HTML字符串
+## 加载本地HTML字符串
 
 有时候，我们可能需要渲染一个内存中的HTML字符串，CefSharp也提供这样的接口，代码很简单：
 ```
