@@ -142,11 +142,53 @@ protected override CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBr
 ```
 
 ### 添加自定义Body
-未完待续。。。
 
+根据[IRequest](http://cefsharp.github.io/api/75.1.x/html/T_CefSharp_IRequest.htm)的文档，我们可以利用`PostData`属性：
+```
+protected override CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
+{
+    var headers = request.Headers;
+    headers["Custom-Header"] = "My Custom Header";
+    request.Headers = headers;
 
+    string body = "name=foo";
+    byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(body);
 
+    request.InitializePostData();
+    var element = request.PostData.CreatePostDataElement();
+    element.Bytes = byteArray;
+    request.PostData.AddElement(element);
 
+    return CefReturnValue.Continue;
+}
+```
+通过Fiddler这样的抓包工具，我们就会发现，POST 数据已经加上了：
+
+![detail](https://s2.ax1x.com/2019/11/30/QVjqp9.png)
+
+### 加载本地HTML字符串
+
+有时候，我们可能需要渲染一个内存中的HTML字符串，CefSharp也提供这样的接口，代码很简单：
+```
+private void myChrome_Loaded(object sender, RoutedEventArgs e)
+{
+    string html = @"<!DOCTYPE html>
+<html>
+    <head>
+        <title>这是个标题</title>
+        <meta charset='utf-8' />
+        <meta name = 'viewport' content = 'width=device-width, initial-scale=1' />
+     </head>
+    <body>
+        <h1>这是一个一个简单的HTML</h1>
+        <p>Hello World！</p >
+    </body>
+</html>";
+    String url = "https://www.baidu.com";
+    myChrome.LoadHtml(html, url);
+}
+
+```
 
 
 
