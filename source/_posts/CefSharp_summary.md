@@ -273,7 +273,15 @@ public class FilterManager
     {
         lock (dataList)
         {
-            return dataList[guid];
+        
+            if (dataList.ContainsKey(guid))  // 这里要检测key存在，不然会报异常，会导致ContextSwitchDeadlock
+            {
+                return dataList[guid];
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
