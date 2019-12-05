@@ -289,6 +289,60 @@ private void myChrome_Loaded(object sender, RoutedEventArgs e)
 ```
 运行程序，在`输出`视图就可以看到Ajax请求的body数据。
 
+## 截取cookie
+建立Cookie读取对象，继承接口 ICookieVisitor
+```
+public class CookieVisitor : CefSharp.ICookieVisitor
+{
+    public event Action<CefSharp.Cookie> SendCookie;
+
+
+    public bool Visit(Cookie cookie, int count, int total, ref bool deleteCookie)
+    {
+        deleteCookie = false;
+        if (SendCookie != null)
+        {
+            SendCookie(cookie);
+        }
+
+        return true;
+    }
+
+    public void Dispose()
+    {
+    }
+}
+```
+在browser事件中进行处理
+```
+private void browser_FrameLoadEnd(object sender, CefSharp.FrameLoadEndEventArgs e)
+{
+    var cookieManager = myChrome.GetCookieManager();
+
+    CookieVisitor visitor = new CookieVisitor();
+    visitor.SendCookie += visitor_SendCookie;
+    cookieManager.VisitAllCookies(visitor);
+}
+```
+**回调事件**
+```
+private void visitor_SendCookie(CefSharp.Cookie obj)
+{
+    Console.WriteLine("获取cookie：" + obj.Domain.TrimStart('.') + "^" + obj.Name + "^" + obj.Value + "$");
+}
+```
+设置CefSharp实例事件：
+```
+private void myChrome_Loaded(object sender, RoutedEventArgs e)
+{
+    String url = "https://www.baidu.com";
+    myChrome.Load(url);
+    myChrome.FrameLoadEnd += browser_FrameLoadEnd;
+}
+```
+运行程序，在`输出`视图就可以看到**cookie**数据了。
+
+
 
 
 
