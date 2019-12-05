@@ -342,6 +342,20 @@ private void myChrome_Loaded(object sender, RoutedEventArgs e)
 ```
 运行程序，在`输出`视图就可以看到**cookie**数据了。
 
+## 资源清理
+关闭应用，发现`CefSharp.BrowserSubprocess.exe`进程会发现没有结束，其实在退出事件中，我们需要调用`Cef.Shutdown()`方法
+```
+try  
+{  
+    if (browser != null)  
+    {  
+        browser.Dispose();  
+        Cef.Shutdown();  
+    }  
+}  
+catch { }  
+```
+
 
 
 
