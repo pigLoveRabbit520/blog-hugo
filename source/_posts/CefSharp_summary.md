@@ -65,7 +65,7 @@ class CustomRequestHandler : RequestHandler
 ```
 
 `GetResourceRequestHandler`是我们要重点关注的方法，里头我们返回了一个类实例，在这个类中我们就可以**自定义请求**。  
-新版的CefSharp（75版本之后）把`OnBeforeResourceLoad`方法移动到了`ResourceRequestHandler`接口里，所以我们还需要一个继承`ResourceRequestHandler`的类（也就是上面代码中的`CustomResourceRequestHandler`类）：
+新版的CefSharp（75版本之后）把`OnBeforeResourceLoad`方法移动到了`IResourceRequestHandler`接口里（[文档](http://cefsharp.github.io/api/75.1.x/html/T_CefSharp_IResourceRequestHandler.htm)），同样的CefSharp也提供了这个接口的默认实现：`ResourceRequestHandler`，所以我们还需要一个继承`ResourceRequestHandler`的类（也就是上面代码中的`CustomResourceRequestHandler`类）：
 ```
 public class CustomResourceRequestHandler : ResourceRequestHandler
 {
