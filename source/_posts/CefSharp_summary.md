@@ -349,3 +349,4 @@ private void myChrome_Loaded(object sender, RoutedEventArgs e)
 参考：
 * [StackOverflow](https://stackoverflow.com/questions/31250797/chromium-send-custom-header-info-on-initial-page-load-c-sharp)
 * [How to read the JSON response content from a XMLHttpRequest?](https://stackoverflow.com/questions/40944056/how-to-read-the-json-response-content-from-a-xmlhttprequest/43652932#43652932)
+* [**CefSharp中文帮助文档**](https://github.com/cefsharp/CefSharp/wiki/CefSharp%E4%B8%AD%E6%96%87%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3)
