@@ -43,9 +43,15 @@ private void myChrome_Loaded(object sender, RoutedEventArgs e)
 
 
 ## 截断请求
-根据[文档](http://cefsharp.github.io/api/75.1.x/html/T_CefSharp_Handler_RequestHandler.htm)，我们可以看到`RequestHandler`接口中的方法`GetResourceRequestHandler`会在每次发请求前被调用：
+根据[文档](http://cefsharp.github.io/api/75.1.x/html/T_CefSharp_Handler_RequestHandler.htm)，我们可以看到`RequestHandler`类中的方法`GetResourceRequestHandler`会在每次发请求前被调用：
 > GetResourceRequestHandler  
 > Called on the CEF IO thread before a resource request is initiated.
+
+`RequestHandler`类是[`IRequestHandler`](http://cefsharp.github.io/api/75.1.x/html/T_CefSharp_IRequestHandler.htm)接口的默认实现，我们自定义请求可以继承这个类：
+> Default implementation of IRequestHandler. 
+> This class provides default implementations of the methods from IRequestHandler, therefore providing a convenience base class for any custom request handler.
+
+
 
 所以我们先需要一个实现`IRequestHandler`接口的类
 ```
