@@ -385,6 +385,8 @@ catch { }
 
 
 
+示例代码[下载](http://file.51lucy.com/BroswerTest.rar)
+
 
 
 参考：
