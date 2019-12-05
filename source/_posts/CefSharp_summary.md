@@ -342,6 +342,33 @@ private void myChrome_Loaded(object sender, RoutedEventArgs e)
 ```
 运行程序，在`输出`视图就可以看到**cookie**数据了。
 
+## Javascript交互
+
+### C#执行js方法
+```
+myChrome.GetBrowser().MainFrame.ExecuteJavaScriptAsync("document.getElementById('testid').click();");  
+```
+以上代码就会触发id为`testid`的元素的`click`事件。  
+注意：**脚本是在 Frame 级别执行**，页面永远至少有一个Frame（ MainFrame ）。
+
+### 获取Javascript方法结果
+这里需要使用`Task<JavascriptResponse> EvaluateScriptAsync(string script, TimeSpan? timeout)`方法。 JavaScript代码是异步执行的，因此使用.NET Task 类返回一个响应，其中包含错误消息，结果和一个成功（bool）标志。
+```
+// Get Document Height  
+var task = frame.EvaluateScriptAsync("(function() { var body = document.body, html = document.documentElement; return  Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight ); })();", null);
+  
+task.ContinueWith(t =>  
+{  
+    if (!t.IsFaulted)  
+    {  
+        var response = t.Result;  
+        EvaluateJavaScriptResult = response.Success ? (response.Result ?? "null") : response.Message;  
+    }  
+}, TaskScheduler.FromCurrentSynchronizationContext());  
+```
+
+
+
 ## 资源清理
 关闭应用，发现`CefSharp.BrowserSubprocess.exe`进程会发现没有结束，其实在退出事件中，我们需要调用`Cef.Shutdown()`方法
 ```
