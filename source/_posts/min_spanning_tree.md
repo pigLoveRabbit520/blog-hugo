@@ -5,7 +5,8 @@ tags:
   - 最小生成树
   - 数据结构
 categories:
-  - algorithm
+  - 算法
+  - ''
 date: 2019-12-10 20:00:00
 ---
 ![docker logo](/images/MST.png)

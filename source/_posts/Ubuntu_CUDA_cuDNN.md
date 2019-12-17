@@ -8,6 +8,9 @@ categories:
   - 机器学习
 date: 2019-09-18 16:00:00
 ---
+
+![upload successful](/images/cuda.png)
+
 最近需要在用[Pytorch](https://pytorch.org/)做深度学习，为了加快训练速度，需要用到GPU运算，故在此记录一下安装过程。  
 我的本机环境：
 * Ubuntu 18.04.3 LTS
