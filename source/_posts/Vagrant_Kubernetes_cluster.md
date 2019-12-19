@@ -110,7 +110,7 @@ Vagrant.configure("2") do |config|
 end
 ```
 更多虚拟机的配置可以查看[官方文档](https://www.vagrantup.com/docs/vagrantfile/machine_settings.html)  
-在Vagrantfile对应的目录下终端键入：`vagrant up`，然后`Vagrant`会帮我们下载`ubuntu/trusty64`这个box，不过在中国下载速度非常慢，在运行`vagrant up`时我们可以看到这个box的下载url，你可以用**迅雷**这些工具直接下载，然后在本地手动添加box
+在Vagrantfile对应的目录下终端键入：`vagrant up`，然后`Vagrant`会帮我们下载`ubuntu/xenial64`这个box，不过在中国下载速度非常慢，在运行`vagrant up`时我们可以看到这个box的下载url，你可以用**迅雷**这些工具直接下载，然后在本地手动添加box
 ```
 $ vagrant up
 Bringing machine 'default' up with 'virtualbox' provider...
@@ -125,12 +125,31 @@ Bringing machine 'default' up with 'virtualbox' provider...
     default: Download redirected to host: cloud-images.ubuntu.com
     .........
 
-$ vagrant box add --name ubuntu/trusty64 /home/lucy/virtualbox.box
-
+$ cd ~/box-add
+$ ls
+metadata.json  virtualbox.box
+$ vagrant box add metadata.json
+==> box: Loading metadata for box 'metadata.json'
+    box: URL: file:///home/lucy/vm-add/metadata.json
+==> box: Adding box 'ubuntu/xenial64' (v20191217.0.0) for provider: virtualbox
+    box: Downloading: ./virtualbox.box
+==> box: Successfully added box 'ubuntu/xenial64' (v20191217.0.0) for 'virtualbox'!
 $ vagrant box list
-ubuntu/xenial64 (virtualbox, 0)
+ubuntu/xenial64 (virtualbox, 20191217.0.0)
 ```
-下载box的URL是`https://vagrantcloud.com/ubuntu/boxes/xenial64/versions/20191217.0.0/providers/virtualbox.box`，可以看到下载的版本是**20191217.0.0**
+下载box的URL是`https://vagrantcloud.com/ubuntu/boxes/xenial64/versions/20191217.0.0/providers/virtualbox.box`，可以看到下载的版本是**20191217.0.0**，另外注意一下这里添加box的是使用一个`metadata.json`文件，使用这样的方式可以定义box版本号，它的内容是：
+```
+{
+    "name": "ubuntu/xenial64",
+    "versions": [{
+        "version": "20191217.0.0",
+        "providers": [{
+            "name": "virtualbox",
+            "url": "./virtualbox.box"
+        }]
+    }]
+}
+```
 
 启动虚拟机你可能会遇到下面的错误：
 
