@@ -109,13 +109,29 @@ Vagrant.configure("2") do |config|
   # config.vm.network "forwarded_port", guest: 80, host: 8080
 end
 ```
+更多虚拟机的配置可以查看[官方文档](https://www.vagrantup.com/docs/vagrantfile/machine_settings.html)  
 在Vagrantfile对应的目录下终端键入：`vagrant up`，然后`Vagrant`会帮我们下载`ubuntu/trusty64`这个box，不过在中国下载速度非常慢，在运行`vagrant up`时我们可以看到这个box的下载url，你可以用**迅雷**这些工具直接下载，然后在本地手动添加box
 ```
+$ vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Box 'ubuntu/xenial64' could not be found. Attempting to find and install...
+    default: Box Provider: virtualbox
+    default: Box Version: >= 0
+==> default: Loading metadata for box 'ubuntu/xenial64'
+    default: URL: https://vagrantcloud.com/ubuntu/xenial64
+==> default: Adding box 'ubuntu/xenial64' (v20191217.0.0) for provider: virtualbox
+    default: Downloading: https://vagrantcloud.com/ubuntu/boxes/xenial64/versions/20191217.0.0/providers/virtualbox.box
+==> default: Box download is resuming from prior download progress
+    default: Download redirected to host: cloud-images.ubuntu.com
+    .........
+
 $ vagrant box add --name ubuntu/trusty64 /home/lucy/virtualbox.box
 
 $ vagrant box list
 ubuntu/xenial64 (virtualbox, 0)
 ```
+下载box的URL是`https://vagrantcloud.com/ubuntu/boxes/xenial64/versions/20191217.0.0/providers/virtualbox.box`，可以看到下载的版本是**20191217.0.0**
+
 启动虚拟机你可能会遇到下面的错误：
 
 ![upload successful](/images/virtualbox-error.png)
