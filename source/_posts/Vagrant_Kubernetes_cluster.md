@@ -50,7 +50,7 @@ DKMS isn't required by VirtualBox since 5.1.0. Which means that you downloaded V
 
 ## 启动虚拟机
 `Vagrant`跟docker类似，可以提供一致性环境的，它可以编写`Vagrantfile`（类似`docker-compose.yml`）来定义虚拟机中安装什么软件，环境和配置，它使用ruby语法。`Vagrant`也做了[box源](https://app.vagrantup.com/boxes/search)，类似docker image。  
-下面给出一个小栗子感受下，这里使用`ubuntu/xenial64`这个box
+下面给出一个小栗子感受下，这里使用`ubuntu/xenial64`（Ubuntu 16.06 64位）这个box
 ```
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
@@ -111,10 +111,10 @@ end
 ```
 在Vagrantfile对应的目录下终端键入：`vagrant up`，然后`Vagrant`会帮我们下载`ubuntu/trusty64`这个box，不过在中国下载速度非常慢，在运行`vagrant up`时我们可以看到这个box的下载url，你可以用**迅雷**这些工具直接下载，然后在本地手动添加box
 ```
-$ vagrant box add --name ubuntu/trusty64 /home/lucy/Download/trusty-server-cloudimg-amd64-vagrant-disk1.box
+$ vagrant box add --name ubuntu/trusty64 /home/lucy/virtualbox.box
 
 $ vagrant box list
-ubuntu/trusty64 (virtualbox, 0)
+ubuntu/xenial64 (virtualbox, 0)
 ```
 启动虚拟机你可能会遇到下面的错误：
 
