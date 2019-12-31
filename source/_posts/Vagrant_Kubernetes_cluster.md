@@ -310,7 +310,7 @@ Vagrant.configure("2") do |config|
             config.vm.provider "virtualbox" do |v|
 
                 v.name = opts[:name]
-            	v.customize ["modifyvm", :id, "--groups", "/Ballerina Development"]
+            	v.customize ["modifyvm", :id, "--groups", "/Salamander Development"]
                 v.customize ["modifyvm", :id, "--memory", opts[:mem]]
                 v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
                 v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
@@ -333,3 +333,135 @@ Vagrant.configure("2") do |config|
     end
 end
 ```
+启动集群`vagrant up`，这里需要耐心等待几分钟，因为要启动三个虚拟机、安装一些软件和设置环境。  
+启动集群后，进入**Master节点**`vagrant ssh k8s-head`查看集群状态：
+```
+$ kubectl get nodes
+NAME         STATUS   ROLES    AGE    VERSION
+k8s-head     Ready    master   5h7m   v1.15.7
+k8s-node-1   Ready    <none>   5h5m   v1.15.7
+k8s-node-2   Ready    <none>   5h2m   v1.15.7
+
+
+$ kubectl get pods --all-namespaces
+NAMESPACE              NAME                                         READY   STATUS    RESTARTS   AGE
+kube-system            calico-node-j5kw8                            2/2     Running   4          5h7m
+kube-system            calico-node-kq89s                            2/2     Running   0          5h6m
+kube-system            calico-node-twvdl                            2/2     Running   0          5h2m
+kube-system            coredns-94d74667-jhjl8                       1/1     Running   2          5h7m
+kube-system            coredns-94d74667-qd9qv                       1/1     Running   2          5h7m
+kube-system            etcd-k8s-head                                1/1     Running   2          5h6m
+kube-system            kube-apiserver-k8s-head                      1/1     Running   2          5h6m
+kube-system            kube-controller-manager-k8s-head             1/1     Running   2          5h6m
+kube-system            kube-proxy-7d8wj                             1/1     Running   0          5h2m
+kube-system            kube-proxy-hn89g                             1/1     Running   0          5h6m
+kube-system            kube-proxy-t8qf9                             1/1     Running   2          5h7m
+kube-system            kube-scheduler-k8s-head                      1/1     Running   2          5h6m
+```
+节点都是**Ready**和pods都是**Running**说明集群成功启动了。
+
+
+
+
+## 安装官方Dashboard
+[Dashboard](https://github.com/kubernetes/dashboard)是Kubernetes的一个插件，代码单独放在Github的一个仓库里。  
+按照[官方文档](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/)，步骤也蛮简单的，首先执行命令：
+```
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+```
+
+查看一下Dashboard的服务：
+```
+
+$ kubectl  get pod,deploy,svc -n kubernetes-dashboard
+NAME                                             READY   STATUS    RESTARTS   AGE
+pod/dashboard-metrics-scraper-6c554969c6-jqhjx   1/1     Running   0          5h5m
+pod/kubernetes-dashboard-56c5f95c6b-jrj58        1/1     Running   5          5h5m
+
+NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.extensions/dashboard-metrics-scraper   1/1     1            1           5h5m
+deployment.extensions/kubernetes-dashboard        1/1     1            1           5h5m
+
+NAME                                TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/dashboard-metrics-scraper   ClusterIP   10.106.117.224   <none>        8000/TCP   5h5m
+service/kubernetes-dashboard        ClusterIP   10.98.23.78      <none>        443/TCP    5h5m
+
+
+# 我们可以看到官方的dashboard帮我们启动了web-ui，并且帮我们启动了一个Metric服务
+# 但是dashboard默认使用的https的443端口
+
+# 测试下Dashboard是否正常
+$ curl https://10.98.23.78:443 -k -I
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Cache-Control: no-store
+Content-Length: 1262
+Content-Type: text/html; charset=utf-8
+Last-Modified: Fri, 06 Dec 2019 15:14:02 GMT
+Date: Tue, 31 Dec 2019 06:35:55 GMT
+```
+
+### 访问Dashboard
+访问Dashboard有好几种方式
+* 将kubernetes-dashboard Service暴露 NodePort，使用 http://NodeIP:nodePort 地址访问 dashboard
+* 使用Ingress之类的入口服务进行代理访问
+* 通过 API server 访问 dashboard（https 6443端口和http 8080端口方式）
+* 通过 kubectl proxy 访问 dashboard
+
+
+这里我们通过`kubectl proxy`，在**k8s-head**节点执行：
+```
+$ kubectl proxy --address='0.0.0.0' --accept-hosts='^*$'
+```
+在访问之前，我们需要先创建一个**User**（一个**ServiceAccount**，k8s内概念），创建dashboard-adminuser.yaml文件，写入
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+
+```
+执行`kubectl apply -f dashboard-adminuser.yaml`。  
+查看用户token（之后在浏览器中输入）
+```
+$ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+Name:         admin-user-token-mxmtr
+Namespace:    kubernetes-dashboard
+Labels:       <none>
+Annotations:  kubernetes.io/service-account.name: admin-user
+              kubernetes.io/service-account.uid: 54ddc041-f3af-41fa-a824-6a3e29f0ffa3
+
+Type:  kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:     1025 bytes
+namespace:  20 bytes
+token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi11c2VyLXRva2VuLW14bXRyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI1NGRkYzA0MS1mM2FmLTQxZmEtYTgyNC02YTNlMjlmMGZmYTMiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZXJuZXRlcy1kYXNoYm9hcmQ6YWRtaW4tdXNlciJ9.osyqbUwS4pLDEhZ0iL0aAu2f5me82bGTEfXEW8ycS5-JRar4iYcWkqhJZ9FhZV47P0WKLT9UWiLcDw1rVPZbMSHrRnFZcRHmLO35tVBaijjvgsgm2X5856G-HS1VNMgQBSZXiQXr1Lt3Dj9JHHksbiLGg-3wRy7HqD-I8JcR1pHZ_ViOqQ1j6WIbvhfEE3FpTuuSPAcjwVNutXAfur6oJktjYAcwMjWTQ4-yMQ2NRSWM7AcJtjp_7p3WwnHmO6fH6LtrGQzmXwHh5ICmei2LrAE2cxwN251aMVnrPGt00Ff4ij2-yLyI4VZOgAsNuPegctm-GuCOTGNX9Ew-o1si_Q
+```
+
+
+为了在宿主机上能访问，我们需要用VirutalBox管理界面添加一个端口映射：  
+
+![upload successful](https://s2.ax1x.com/2019/12/31/l1FsQP.png)
+
+好了，现在我们可以访问Dashboard了，浏览内输入`http://localhost:31694/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.`，可以看到
+![](/images/k8s-dashboard.png)
+
+
