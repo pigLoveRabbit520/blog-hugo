@@ -18,6 +18,7 @@ Kubernetes，简称 **k8s**（k，8 个字符，s——明白了？）或者 “
 * OS：Ubuntu 18.04.3 LTS
 * Vagrant版本：2.2.6
 * VirtualBox版本：6.0.14 r133895 (Qt5.9.5)
+* Kubernetes版本：1.15.7
 
 <!-- more -->
 
@@ -357,8 +358,18 @@ kube-system            kube-proxy-7d8wj                             1/1     Runn
 kube-system            kube-proxy-hn89g                             1/1     Running   0          5h6m
 kube-system            kube-proxy-t8qf9                             1/1     Running   2          5h7m
 kube-system            kube-scheduler-k8s-head                      1/1     Running   2          5h6m
+
+$ kubectl cluster-info
+Kubernetes master is running at https://192.168.205.10:6443
+KubeDNS is running at https://192.168.205.10:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+$ kubectl get componentstatuses
+NAME                 STATUS    MESSAGE             ERROR
+scheduler            Healthy   ok                  
+controller-manager   Healthy   ok                  
+etcd-0               Healthy   {"health":"true"}
 ```
-节点都是**Ready**和pods都是**Running**说明集群成功启动了。
+节点都是**Ready**和pods都是**Running**说明集群成功启动了，`kubectl cluster-info`可以查看集群信息，`kubectl get componentstatuses`可以查看各组件信息。
 
 
 
@@ -409,7 +420,8 @@ Date: Tue, 31 Dec 2019 06:35:55 GMT
 * 通过 kubectl proxy 访问 dashboard
 
 
-这里我们通过`kubectl proxy`，在**k8s-head**节点执行：
+#### kubectl proxy
+首先这里我们通过`kubectl proxy`，在**k8s-head**节点执行：
 ```
 $ kubectl proxy --address='0.0.0.0' --accept-hosts='^*$'
 ```
@@ -465,3 +477,37 @@ token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2V
 ![](/images/k8s-dashboard.png)
 
 
+## kubernetes常用命令
+```
+## 查看
+kubectl cluster-info    ----查看集群信息
+kubectl get pods --all-namespaces ------查看所有pod信息
+kubectl get cs    ----查看各组件（componentstatuses）信息，可以简写为rc
+kubectl get pods -n default   ----列出default命名空间所有的pods
+kubectl get pods -o wide    ----查看pods所在的运行节点
+kubectl get pods -o yaml    ----查看pods定义的详细信息
+kubectl get rc    ----查看Replication Controller信息
+kubectl get service    ----查看service的信息
+kubectl get nodes    ----查看节点信息
+kubectl get pod --selector name=redis    ----按selector名来查找pod
+kubectl exec pod名字 env    ----查看运行的pod的环境变量
+kubectl  get pod,deploy,svc -n kubernetes-dashboard ---一起查看pod，service，deployment信息
+
+## 创建
+kubectl create -f 文件名    ----创建
+kubectl replace -f 文件名  [--force]    ----重建
+
+## 删除
+kubectl delete -f 文件名
+kubectl delete pod pod名
+kubectl delete rc rc名
+kubectl delete service service名
+kubectl delete pod --all
+kubectl run mybusybox --image=busybox    ----启动一个pod
+kubectl run mybusybox --image=busybox --replicas=5    ----启动多个pod
+kubectl delete deployments mybusybox    ----删除创建的pod
+kubectl get pods    ----列出当前所有的pod
+kubectl describe pod [PODNAME]    ----查看pod的状态
+kubectl run mynginx --image=nginx --port=80 --hostport=8000    ----创建带有端口映射的pod
+kubectl run -i --tty busybox --image=busybox    ----创建带有终端的pod
+```
