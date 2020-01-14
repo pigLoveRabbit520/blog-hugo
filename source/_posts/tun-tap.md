@@ -66,7 +66,7 @@ socket、协议栈（Newwork Protocol Stack）和网络设备（eth0和tun0）�
 
 
 
-## 示例程序
+### 示例程序
 为了使用tun/tap设备，用户层程序需要通过系统调用打开/dev/net/tun获得一个读写该设备的文件描述符(FD)，并且调用ioctl()向内核注册一个TUN或TAP类型的虚拟网卡(实例化一个tun/tap设备)，其名称可能是**tap7b7ee9a9-c1/vnetXX/tunXX/tap0**等。
 
 这里写了一个程序，它收到tun设备的数据包之后，只打印出收到了多少字节的数据包，其它的什么都不做。
