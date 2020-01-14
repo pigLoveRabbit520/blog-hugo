@@ -11,6 +11,9 @@ date: 2020-01-14 13:00:00
 Veth缩写是Virtual ETHernet。veth设备是在linux内核中是成对出现（所以也叫`veth-pair`），两个设备彼此相连，一个设备从协议栈读取数据后，会将数据发送到另一个设备上去。这个设备其实是专门为`container`所建的，作用就是把一个**network namespace**发出的数据包转发到另一个**namespace**（通常就是宿主机）。    
 ![](https://s2.ax1x.com/2020/01/14/lbBga9.png)  
 
+<!-- more -->
+
+
 ### 添加Veth设备
 ```
 $ sudo ip netns add net0
