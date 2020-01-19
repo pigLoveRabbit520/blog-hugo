@@ -17,6 +17,9 @@ date: 2020-01-18 10:00:00
 **Qt**是一个C++库，或者说是开发框架，里面集成了一些库函数，提高开发效率。  
 **Qt Creator**是Qt集成开发环境，你可以在这里编写，编译，运行你的程序。所以最开始写Qt只安装**Qt Creator**这个是不行的，因为还没有相关的Qt库呢，但是新版的**Qt Creator**（5.9开始）已经集成了Qt了，所以入门就方便很多了。  
 关于Qt下载，大家可以打开这里的[链接](http://download.qt.io/archive/qt/)，里面有各版本Qt（**Qt**和**Qt Creator**的集成包），操作简单，最新版本是**5.14**。  
+
+<!-- more -->
+
 windows版本只要双击exe就可以安装了，Linux版本需要先添加执行权限然后运行文件
 ```
 $ chmod +x qt-opensource-linux-x64-5.13.2.run
@@ -51,4 +54,16 @@ int main(int argc, char *argv[])
 }
 ```
 点击左下角的`Run`按钮，就可以启动程序。  
-![](https://s2.ax1x.com/2020/01/18/19PDNF.png) 
+![](https://s2.ax1x.com/2020/01/18/19PDNF.png)
+
+
+
+
+
+
+
+
+
+## 参考
+
+* 油管上VoidRealms的[Qt视频](https://www.youtube.com/watch?v=Id-sPu_m_hE&t=176s)
