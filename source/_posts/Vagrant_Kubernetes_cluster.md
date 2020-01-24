@@ -476,6 +476,63 @@ token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2V
 好了，现在我们可以访问Dashboard了，浏览内输入`http://localhost:31694/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.`，可以看到
 ![](/images/k8s-dashboard.png)
 
+#### NodePort
+这个过程比`kubectl proxy`简单，再安装Dashboard之前，把`Service`类型改成`NodePort`即可：
+```
+$ wget https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml  #下载yaml
+$ vim recommended.yaml
+```
+找到Service部分，改成NodePort
+````
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  type: NodePort  # 这个是新增部分
+  ports:
+    - port: 443
+      targetPort: 8443
+  selector:
+    k8s-app: kubernetes-dashboard
+```
+查看，Service的随机端口：
+```
+$ kubectl get pods,svc --all-namespaces
+
+NAMESPACE              NAME                                             READY   STATUS    RESTARTS   AGE
+kube-system            pod/calico-node-ffn9k                            2/2     Running   10         32d
+kube-system            pod/calico-node-fz8v6                            2/2     Running   12         32d
+kube-system            pod/calico-node-gvjft                            2/2     Running   8          32d
+kube-system            pod/coredns-94d74667-8jp5k                       1/1     Running   4          32d
+kube-system            pod/coredns-94d74667-tlph7                       1/1     Running   4          32d
+kube-system            pod/etcd-k8s-head                                1/1     Running   4          32d
+kube-system            pod/kube-apiserver-k8s-head                      1/1     Running   4          32d
+kube-system            pod/kube-controller-manager-k8s-head             1/1     Running   4          32d
+kube-system            pod/kube-proxy-4rsp4                             1/1     Running   5          32d
+kube-system            pod/kube-proxy-dccdc                             1/1     Running   5          32d
+kube-system            pod/kube-proxy-x82tl                             1/1     Running   4          32d
+kube-system            pod/kube-scheduler-k8s-head                      1/1     Running   4          32d
+kubernetes-dashboard   pod/dashboard-metrics-scraper-6c554969c6-wmwpt   1/1     Running   0          18m
+kubernetes-dashboard   pod/kubernetes-dashboard-56c5f95c6b-s66g8        1/1     Running   0          18m
+
+NAMESPACE              NAME                                TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                  AGE
+default                service/kubernetes                  ClusterIP   10.96.0.1        <none>        443/TCP                  32d
+kube-system            service/calico-typha                ClusterIP   10.104.182.223   <none>        5473/TCP                 32d
+kube-system            service/kube-dns                    ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP   32d
+kubernetes-dashboard   service/dashboard-metrics-scraper   ClusterIP   10.99.243.131    <none>        8000/TCP                 18m
+kubernetes-dashboard   service/kubernetes-dashboard        NodePort    10.96.23.239     <none>        443:30646/TCP            18m
+```
+可以看到暴露端口是**30646**，访问Master节点上的30646端口`https://192.168.205.10:30646`，需要填写的**token**和上面`kubectl proxy`遇到的问题一样，先创建**ServiceAccount**和**ClusterRoleBinding**，然后查看这个账号的token。
+
+
+#### API Server
+这里还有点小问题，等待解决。。
+
+
 
 ## kubernetes常用命令
 ```
@@ -511,3 +568,8 @@ kubectl describe pod [PODNAME]    ----查看pod的状态
 kubectl run mynginx --image=nginx --port=80 --hostport=8000    ----创建带有端口映射的pod
 kubectl run -i --tty busybox --image=busybox    ----创建带有终端的pod
 ```
+
+参考
+* [Github——kubernetes-cluster-via-vagrant](https://github.com/ecomm-integration-ballerina/kubernetes-cluster)
+* [Kubernetes – unable to login to the Dashboard
+](https://www.australtech.net/kubernetes-unable-to-login-to-the-dashboard/)
