@@ -542,7 +542,9 @@ grep 'client-key-data' ~/.kube/config | head -n 1 | awk '{print $2}' | base64 -d
 openssl pkcs12 -export -clcerts -inkey kubecfg.key -in kubecfg.crt -out kubecfg.p12 -name "kubernetes-client"
 ```
 然后，在在 chrome 导入了 p12 证书（点击“设置”，“管理证书”那里导入）。  
-访问链接：`https://192.168.205.10:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy`，就可以看到**登录界面**了（注意：**新版的Dashboard，命名空间移动到了kubernetes-dashboard中**），token的填写跟上面`kubectl proxy`一样。
+访问链接：`https://192.168.205.10:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy`，就可以看到**登录界面**了（注意：**新版的Dashboard，命名空间移动到了kubernetes-dashboard中**）  
+![](https://s2.ax1x.com/2020/01/26/1mG9UJ.png)
+**token**的填写跟上面`kubectl proxy`一样，当然你也可以直接用master节点中`$HOME/.kube/config`文件来登录。
 
 
 
