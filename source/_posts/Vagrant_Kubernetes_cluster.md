@@ -530,7 +530,20 @@ kubernetes-dashboard   service/kubernetes-dashboard        NodePort    10.96.23.
 
 
 #### API Server
-这里还有点小问题，等待解决。。
+首先，我们需要导出p12证书：
+```
+# 生成 client-certificate-data
+grep 'client-certificate-data' ~/.kube/config | head -n 1 | awk '{print $2}' | base64 -d >> kubecfg.crt
+
+# 生成 client-key-data
+grep 'client-key-data' ~/.kube/config | head -n 1 | awk '{print $2}' | base64 -d >> kubecfg.key
+
+# 生成 p12
+openssl pkcs12 -export -clcerts -inkey kubecfg.key -in kubecfg.crt -out kubecfg.p12 -name "kubernetes-client"
+```
+然后，在在 chrome 导入了 p12 证书（点击“设置”，“管理证书”那里导入）。  
+访问链接：`https://192.168.205.10:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy`，就可以看到**登录界面**了（注意：**新版的Dashboard，命名空间移动到了kubernetes-dashboard中**），token的填写跟上面`kubectl proxy`一样。
+
 
 
 
@@ -573,3 +586,4 @@ kubectl run -i --tty busybox --image=busybox    ----创建带有终端的pod
 * [Github——kubernetes-cluster-via-vagrant](https://github.com/ecomm-integration-ballerina/kubernetes-cluster)
 * [Kubernetes – unable to login to the Dashboard
 ](https://www.australtech.net/kubernetes-unable-to-login-to-the-dashboard/)
+* [kubernetes-dashboard(1.8.3)部署与踩坑](https://www.cnblogs.com/rainingnight/p/deploying-k8s-dashboard-ui.html#api-server)
