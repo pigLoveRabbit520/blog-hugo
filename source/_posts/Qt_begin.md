@@ -92,7 +92,67 @@ connect(slider, SIGNAL(valueChanged(int)),
 
 
 
+## Gui简单例子
+这个例子中，我们用了上面槽的知识，我们在界面上放了一个`button`，然后添加了**slot**获得了button的click事件发送者的`objectName`。  
+**界面**  
 
+![upload successful](/images/Qt-Gui-Example.png)  
+
+**mainwindow.h**
+```
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+private:
+    Ui::MainWindow *ui;
+private slots:
+    void handleButton();  // 处理函数
+};
+#endif // MAINWINDOW_H
+
+```
+
+**mainwindow.cpp**
+```
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <QDebug>
+
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+    connect(ui->myPushButton, SIGNAL(clicked()), this, SLOT(handleButton()));
+}
+
+void MainWindow::handleButton()
+{
+    QObject *senderObj = sender(); // This will give Sender object
+    QString senderObjName = senderObj->objectName();
+    qDebug() << senderObjName;  // get myPushButton
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+```
 
 
 
@@ -103,4 +163,4 @@ connect(slider, SIGNAL(valueChanged(int)),
 
 ## 参考
 
-* 油管上VoidRealms的[Qt视频](https://www.youtube.com/watch?v=Id-sPu_m_hE&t=176s)
+* 油管上VoidRealms的[Qt视频](https://www.youtube.com/watch?v=Id-sPu_m_hE&list=PL2D1942A4688E9D63&index=2)
