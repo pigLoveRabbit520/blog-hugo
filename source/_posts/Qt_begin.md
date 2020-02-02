@@ -74,6 +74,9 @@ int main(int argc, char *argv[])
 
 你也能把槽定义成虚的，这一点在实际应用中非常有用。
 
+### 信号与槽的关联
+通过调用 **QObject** 对象的 connect 函数来将某个对象的信号与另外一个对象的槽函数相关联，这样当发射者发射信号时，接收者的槽函数将被调用。  
+
 connect()语句的原型类似于：
 ```
 connect(sender, SIGNAL(signal), receiver, SLOT(slot));
