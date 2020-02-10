@@ -29,6 +29,19 @@ $ ./qt-opensource-linux-x64-5.13.2.run
 ```
 sudo apt-get install -y gcc g++
 ```
+在用到`WebEngine`组件的会遇到问题
+**error: GL/gl.h: No such file or directory**，需要
+```
+sudo apt-get install mesa-common-dev
+```
+Note: Just installing the above-mentioned mesa-common-dev kit is not sufficient for more recent Ubuntu versions. Based on a comment in the Qt forum an additional package needs installation. Execute following command:
+```
+sudo apt-get install libglu1-mesa-dev -y
+```
+Tested with Qt5.3.1 and Ubuntu 14.04 and it solved the problem with missing **-lGL**.
+
+
+
 
 这一步需要注册一个账号，随便注册一个即可。  
 ![install 1](https://s2.ax1x.com/2020/01/18/1p7NOs.png)  
@@ -164,3 +177,4 @@ MainWindow::~MainWindow()
 ## 参考
 
 * 油管上VoidRealms的[Qt视频](https://www.youtube.com/watch?v=Id-sPu_m_hE&list=PL2D1942A4688E9D63&index=2)
+* [Install Qt5 On Ubuntu](https://wiki.qt.io/Install_Qt_5_on_Ubuntu)
