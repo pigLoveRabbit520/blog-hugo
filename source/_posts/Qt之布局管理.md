@@ -92,3 +92,8 @@ MainWindow::MainWindow(QWidget *parent)
 ```
 最终呈现的效果是：  
 ![](https://s2.ax1x.com/2020/02/12/1b3US0.png)
+
+
+
+参考：  
+* [6.2 水平和垂直布局器](https://qtguide.ustclug.org/ch06-02.htm)
