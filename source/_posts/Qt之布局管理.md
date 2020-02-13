@@ -91,8 +91,27 @@ MainWindow::MainWindow(QWidget *parent)
 }
 ```
 最终呈现的效果是：  
-![](https://s2.ax1x.com/2020/02/12/1b3US0.png)
+![](https://s2.ax1x.com/2020/02/12/1b3US0.png)  
+然后，我再添加一个水品布局器，在里头放入3个label  
+```
+QHBoxLayout *layoutH = new QHBoxLayout;
+layout->addLayout(layoutH, 4);  // stretch比例为4
+QLabel *label6 = new QLabel("Six");
+QLabel *label7 = new QLabel("seven");
+QLabel *label8 = new QLabel("eight");
 
+label6->setStyleSheet("background-color: #7B72E9");
+label7->setStyleSheet("background-color: #1B9AF7");
+label8->setStyleSheet("background-color: #FF4351");
+
+layoutH->addWidget(label6);
+layoutH->addWidget(label7);
+layoutH->addWidget(label8);
+
+```
+最终效果为：  
+
+![upload successful](/images/pasted-1.png)
 
 
 参考：  
