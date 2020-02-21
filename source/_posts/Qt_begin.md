@@ -50,6 +50,19 @@ Tested with Qt5.3.1 and Ubuntu 14.04 and it solved the problem with missing **-l
 最后来到Qt Creator的启动界面  
 ![](https://s2.ax1x.com/2020/01/18/1pqSyQ.png)
 
+
+## 配置环境变量
+这一步配置的环境变量在打包Qt程序的时候是需要的。  
+
+编辑`vim ~/.bashrc`，加入以下变量
+```
+export QTDIR=/home/salamander/Qt5.14.1/5.14.1/gcc_64   #这个路径依据你安装的Qt路径定
+export PATH=$QTDIR/bin:$PATH
+export MANPATH=$QTDIR/man:$MANPATH
+export LD_LIBRARY_PATH=$QTDIR/lib:$LD_LIBRARY_PATH
+```
+
+
 ## 写个hello world
 点击**文件**菜单，然后新建项目，选择`Qt Console Application`。  
 ![](https://s2.ax1x.com/2020/01/18/19CDSA.png)  
