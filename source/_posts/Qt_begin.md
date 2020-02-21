@@ -9,7 +9,7 @@ date: 2020-01-18 10:00:00
 ---
 本文环境：
 * OS：Ubuntu 18.04.3 LTS
-* Qt版本：5.13.1
+* Qt版本：5.14.1
 * Qt Creator版本：4.10.1
 
 ## Qt安装
@@ -61,6 +61,46 @@ export PATH=$QTDIR/bin:$PATH
 export MANPATH=$QTDIR/man:$MANPATH
 export LD_LIBRARY_PATH=$QTDIR/lib:$LD_LIBRARY_PATH
 ```
+但是在你执行`qmake`命令的时候，你会发现错误：
+```
+qmake: could not exec '/usr/lib/x86_64-linux-gnu/qt4/bin/qmake': no such file or directory
+```
+我们发现`qmake`默认指向了qt4（Ubuntu 18默认装了qt4），其实现在qt官方推荐使用**qtchooser**来管理多个qt版本。
+
+### 什么是qtchooser
+qtchooser其实和jdk版本管理软件一样,是一个qt版本管理软件.用于设置安装多个qt的系统中默认使用的qt版本.我们知道环境变量有一个缺陷:一次只支持一个版本的qt,有的应用可能只兼容低版本qt,这样又要配置环境变量非常麻烦.使用qtchooser方便快速切换qt版本而又不用每次重新配置环境变量
+
+
+首先，我们导入自己安装的qt
+```
+sudo qtchooser -install 5.14.1 /home/salamander/Qt5.14.1/5.14.1/gcc_64/bin/qmake
+```
+注意**目录**一定要精确到qmake这个程序,然后用`qtchooser -l`查看当前系统所有的qt版本,得到如下输出:
+```
+4
+5.14.1
+5
+default
+qt4-x86_64-linux-gnu
+qt4
+qt5-x86_64-linux-gnu
+qt5
+```
+可以看到我们自己新安装并命名的**5.14.1**已经导入了,接下来就是设定默认qt版本了,按照qtchooser使用提示,可以添加一个名为`QT_SELECT`的环境变量,来选择默认qt版本:
+```
+export QT_SELECT=5.14.1
+```
+可以看出这个环境变量后面的值跟的是系统已安装的qt的名称,这些名称可以用`qtchooser -l`查看.
+执行`qmake -v`，发现版本已经是我们自己安装的了：
+```
+$ qmake -v
+QMake version 3.1
+Using Qt version 5.14.1 in /home/salamander/Qt5.14.1/5.14.1/gcc_64/lib
+```
+每次export这个`QT_SELECT`变量有点麻烦，你可以编辑`.bashrc`来自动切换qt版本。
+
+
+
 
 
 ## 写个hello world
@@ -191,3 +231,5 @@ MainWindow::~MainWindow()
 
 * 油管上VoidRealms的[Qt视频](https://www.youtube.com/watch?v=Id-sPu_m_hE&list=PL2D1942A4688E9D63&index=2)
 * [Install Qt5 On Ubuntu](https://wiki.qt.io/Install_Qt_5_on_Ubuntu)
+* [Ubuntu 18.04安装QtCreator+配置qt环境+qtchooser
+](https://blog.csdn.net/AAMahone/article/details/86515536)
