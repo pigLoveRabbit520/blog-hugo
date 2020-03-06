@@ -5,6 +5,7 @@ tags:
   - Qt Creator
 categories:
   - C++
+  - Qt
 date: 2020-01-18 10:00:00
 ---
 本文环境：

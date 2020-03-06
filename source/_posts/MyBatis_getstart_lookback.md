@@ -3,7 +3,8 @@ author: Salamander
 tags:
   - MyBatis
 categories:
-  - java
+  - Java
+  - ''
 date: 2020-02-21 12:00:00
 ---
 ![](https://mybatis.org/images/mybatis-logo.png)

@@ -6,6 +6,7 @@ tags:
   - MyBatis
 categories:
   - Java
+  - MyBatis
 date: 2019-10-27 19:05:00
 ---
 最近学习了一下Spring Boot，它确实做到了简单快速创建Java Web应用。这是一篇简单的笔记，记录了Spring Boot集成MyBatis，实现基本的CURD。

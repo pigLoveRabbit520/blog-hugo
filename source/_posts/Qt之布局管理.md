@@ -4,6 +4,7 @@ tags:
   - Qt
 categories:
   - C++
+  - Qt
 date: 2020-02-12 21:00:00
 ---
 本文环境：
