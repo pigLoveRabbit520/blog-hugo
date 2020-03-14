@@ -7,7 +7,8 @@ categories:
   - ''
 date: 2020-02-21 12:00:00
 ---
-![](https://mybatis.org/images/mybatis-logo.png)
+<img src="https://mybatis.org/images/mybatis-logo.png" width="600px" >
+
 
 其实，无论是Mybatis、Hibernate都是ORM的一种实现框架，都是对**JDBC**的一种封装。 
 
