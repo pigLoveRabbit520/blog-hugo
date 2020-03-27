@@ -1,7 +1,12 @@
 title: 一步步自己做个Docker之Linux Namespace 简介
 author: Salamander
-date: 2019-11-28 16:10:23
 tags:
+  - Docker
+  - Namespace
+  - Cgroup
+categories:
+  - Docker
+date: 2019-11-28 16:10:00
 ---
 ![docker logo](/images/docker-logo.png)
 
