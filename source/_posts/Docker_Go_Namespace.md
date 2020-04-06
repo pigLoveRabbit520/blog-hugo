@@ -325,4 +325,76 @@ root         5     1  0 17:11 pts/1    00:00:00 ps -ef
 
 ## 增加Network Namespace
 **Network Namespace**是用来隔离网络设备、IP地址端口等网络栈的Namespace。Network Namespace可以让每个容器拥有自己独立（虚拟的）网络设备，而且容器内的应用可以绑定到自己的端口，每个Namespace内的端口都不会互相冲突。在宿主机上搭建网桥后，就能很方便地实现容器之间通讯，而且不同容器上的应用可以使用相同的端口。  
+继续上述代码，加入`CLONE_NEWNET`：
+```Golang
+package main
 
+import (
+	"log"
+	"os"
+	"os/exec"
+	"syscall"
+)
+
+func main() {
+	cmd := exec.Command("sh")
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Cloneflags:
+			syscall.CLONE_NEWUTS |
+			syscall.CLONE_NEWUSER |
+			syscall.CLONE_NEWIPC |
+			syscall.CLONE_NEWPID|
+			syscall.CLONE_NEWNS |
+			syscall.CLONE_NEWNET, // 增加Network Namespace
+		UidMappings: []syscall.SysProcIDMap{
+			{
+				ContainerID: 0,
+				HostID:      os.Getuid(),
+				Size:        1,
+			},
+		},
+		GidMappings: []syscall.SysProcIDMap{
+			{
+				ContainerID: 0,
+				HostID:      os.Getgid(),
+				Size:        1,
+			},
+		},
+	}
+
+	// set identify for this demo
+	cmd.Env = []string{"PS1=-[namespace-process]-# "}
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+运行我们的程序，查看网络设备，发现为空
+```
+-[namespace-process]-# ifconfig
+-[namespace-process]-#
+```
+在宿主机上查看网络设备，发现有lo, enp7s0这些网络设备。
+```
+enp7s0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        ether 98:fa:9b:f0:85:c2  txqueuelen 1000  (以太网)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (本地环回)
+        RX packets 16381  bytes 23729834 (23.7 MB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 16381  bytes 23729834 (23.7 MB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+....
+```
+从上面的结果我们可以看出Network是隔离了。
