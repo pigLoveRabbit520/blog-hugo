@@ -7,6 +7,13 @@ categories:
   - Java
 date: 2020-04-09 21:00:00
 ---
+<img src="/images/java-web-develop.jpg" width="800px" >
+
+本文环境：
+* OS：Ubuntu 18.04.4 LTS
+* Java版本：1.8.0_221
+
+
 ## Java Web
 虽然我们现在会用`SpringBoot`快速创建一个Web Demo，但是基础不能忘（`SpringBoot`或者`SpringMVC`都是封装后的产物），下面就让我们回顾一下一个最基本的Java Web项目。
 
@@ -22,4 +29,6 @@ date: 2020-04-09 21:00:00
 
 ![upload successful](/images/pasted-4.png)   
 * **src**就是我们写Java代码的地方
-* **web**目录放了一些web项目的配置
+* **web**目录是web应用部署根目录
+* web中的**WEB_INF**是Java的web应用的安全目录。所谓安全就是客户端无法访问，只有服务端可以访问的目录。如果想在页面中直接访问其中的文件，必须通过web.xml文件对要访问的文件进行相应映射才能访问。  
+* WEB_INF中的**web.xml**是Java web 项目最主要的构成部分之一，它是Web应用程序配置文件，描述了 `servlet` 和其他的应用组件配置及命名规则。
