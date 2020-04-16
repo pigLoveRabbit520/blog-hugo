@@ -66,6 +66,8 @@ plt.legend(loc=4)  # 指定legend的位置右下角
 plt.title('polyfitting')
 plt.show()
 ```
+拟合结果:  
+![](https://s1.ax1x.com/2020/04/16/JktOn1.png)
 
 
 ### 给定函数形式拟合
