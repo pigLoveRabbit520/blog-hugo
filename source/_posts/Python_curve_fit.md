@@ -34,35 +34,35 @@ pip  install  -i  https://pypi.doubanio.com/simple/  numpy scipy matplotlib
 ```
 
 ### 多项式拟合
-第一种是进行多项式拟合，数学上可以证明，任意函数都可以表示为多项式形式。
+第一种是进行多项式拟合，数学上可以证明，任意函数都可以表示为多项式形式。用的函数是`numpy`的`polyfit`函数
 ```
 import numpy as np
 import matplotlib.pyplot as plt
- 
-#定义x、y散点坐标
-x = [10,20,30,40,50,60,70,80]
-num = [174,236,305,334,349,351,342,323]
 
-y = np.array(num)
+# 定义x、y散点坐标
+x = [10, 20, 30, 40, 50, 60, 70, 80]
+y = [174, 236, 305, 334, 349, 351, 342, 323]
+
+# 转化为numpy的数组
 x = np.array(x)
-print('x is :\n',x)
-print('y is :\n',y)
-#用3次多项式拟合
-f1 = np.polyfit(x, y, 3)
-print('f1 is :\n',f1)
- 
-p1 = np.poly1d(f1)
-print('p1 is :\n',p1)
- 
-#也可使用yvals=np.polyval(f1, x)
-yvals = p1(x)  #拟合y值
-print('yvals is :\n',yvals)
-#绘图
-plot1 = plt.plot(x, y, 's',label='original values')
-plot2 = plt.plot(x, yvals, 'r',label='polyfit values')
+y = np.array(y)
+
+# 这里的3表示最高幂，也就是函数形式为y = a* x^3 + b * x^2 + c * x + d
+parameter = np.polyfit(x, y, 3)
+print('函数系数为:\n', parameter)
+
+func1 = np.poly1d(parameter)
+print('函数为 :\n', func1)
+
+# 也可使用newY=np.polyval(func1, x)
+newY = func1(x)  # 拟合y值
+
+# 绘图
+plot1 = plt.plot(x, y, 's', label='original values')
+plot2 = plt.plot(x, newY, 'r', label='polyfit values')
 plt.xlabel('x')
 plt.ylabel('y')
-plt.legend(loc=4) #指定legend的位置右下角
+plt.legend(loc=4)  # 指定legend的位置右下角
 plt.title('polyfitting')
 plt.show()
 ```
@@ -127,3 +127,10 @@ def plot_test():
 ```
 
 当然，curve_fit()函数不仅可以用于直线、二次曲线、三次曲线的拟合和绘制，仿照代码中的形式，可以适用于任意形式的曲线的拟合和绘制，只要定义好合适的曲线方程即可。
+
+
+
+
+参考：
+* [np.polyfit()与np.poly1d()将点拟合成曲线](https://drivingc.com/p/5af5ab892392ec35c23048e2)
+* [直线和曲线的拟合与绘制](https://blog.csdn.net/guduruyu/article/details/70313176)
