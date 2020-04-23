@@ -67,7 +67,58 @@ sysctl -p
 ```
 
 
+## 概念
+在进一步使用 Elasticsearch 之前，让我们先了解几个关键概念。
 
+在逻辑层面：  
+* Index (索引)和Type (类型)：这里的 Index 是名词，在之前开始的时候，我们把**索引（index）和类型（type）**类比于SQL数据库中的 database 和 table，但是这样类比是不合适的。刚开始的ES版本一个索引可以有多个类型，在ES6之后每个索引只能有一个类型，所以他们现在都可以当做一张数据表了。
+* Document (文档)：Elasticsearch 使用 JSON 文档来表示一个对象，就像是关系数据库中一个 Table 中的一行数据
+* Field (字段)：每个文档包含多个字段，类似关系数据库中一个 Table 的列
+
+>>>
+为什么要移除映射类型
+开始的时候，我们把**索引（index）和类型（type）**类比于SQL数据库中的 database 和 table，但是这样类比是不合适的。在SQL数据库中，表之间是相互独立的。一个表中的各列并不会影响到其它表中的同名的列。而在映射类型（mapping type）中却不是这样的。
+在同一个 Elasticsearch 索引中，其中不同映射类型中的同名字段在内部是由同一个 Lucene 字段来支持的。换句话说，使用上面的例子，user 类型中的 user_name 字段与 tweet 类型中的 user_name 字段是完全一样的，并且两个 user_name 字段在两个类型中必须具有相同的映射（定义）。
+这会在某些情况下导致一些混乱，比如，在同一个索引中，当你想在其中的一个类型中将 deleted 字段作为 date 类型，而在另一个类型中将其作为 boolean 字段。
+在此之上需要考虑一点，如果同一个索引中存储的各个实体如果只有很少或者根本没有同样的字段，这种情况会导致稀疏数据，并且会影响到Lucene的高效压缩数据的能力
+
+
+在物理层面：  
+
+* Node (节点)：node 是一个运行着的 Elasticsearch 实例，一个 node 就是一个单独的 server
+* Cluster (集群)：cluster 是多个 node 的集合
+* Shard (分片)：数据分片，一个 index 可能会存在于多个 shard
+
+
+
+## 使用
+下面，我们将创建一个存储电影信息的 Document：
+* Index 的名称为 movie
+* Type 为 adventure
+* Document 有两个字段：name 和 actors
+
+我们使用 Elasticsearch 提供的 RESTful API 来执行上述操作，如图所示：  
+
+![](https://s1.ax1x.com/2020/04/23/Jw9Ov6.png)
+
+* 用 url 表示一个资源，比如 /movie/adventure/1 就表示一个 index 为 movie，type 为 adventure，id 为 1 的 document
+* 用 http 方法操作资源，如使用 GET 获取资源，使用 POST、PUT 新增或更新资源，使用 DELETE 删除资源等
+
+用`curl`命令实现上述操作：
+```
+curl -i -X PUT "localhost:9200/movie/adventure/1" -H 'Content-Type: application/json' -d '{"name": "Life of Pi", "actors": ["Suraj", "Irrfan"]}'
+```
+ES6之后需要加上head`Content-Type: application/json`
+
+上述命令返回：
+```
+HTTP/1.1 201 Created
+Location: /movie/adventure/1
+content-type: application/json; charset=UTF-8
+content-length: 158
+
+{"_index":"movie","_type":"adventure","_id":"4","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":1,"_primary_term":1}
+```
 
 
 
