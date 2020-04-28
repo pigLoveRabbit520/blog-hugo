@@ -66,6 +66,63 @@ Bridge（桥）是 Linux 上用来做 TCP/IP 二层协议交换的设备，与�
 
 ![](https://s2.ax1x.com/2020/01/14/lb48fS.png)
 
+使用Bridge前，需要安装`bridge-utils`包
+```
+sudo apt install bridge-utils
+```
+### 查看bridge
+```
+$ brctl show
+
+bridge name	bridge id		STP enabled	interfaces
+br-1f7059361887		8000.0242740c4703	no		veth35716a0
+							vethc51a0aa
+							vethd17adab
+br-4646ac4e576a		8000.02421afdd01b	no		
+br-4b05476c9f71		8000.024240053946	no		
+br-5282ac3290df		8000.0242ad5bae1e	no		
+br-638972aaac40		8000.024278b6d203	no		
+br-67973b91b458		8000.024279f6c039	no		
+br-96dbd98373e7		8000.0242f23b4758	no		veth13b0e48
+							veth3af358a
+							veth52b951a
+							veth5adc514
+							veth6e141f8
+							veth6fcb89b
+							veth710d968
+							vethc9477cd
+							vethcf35aff
+docker0		8000.0242fee4c327	no		
+```
+上面这个是`docker0`的是Docker给你创建的bridge（如果你设备上装有docker的话 就可以看到）。  
+
+### 创建一个bridge
+```
+brctl addbr br66
+```
+
+上面命令创建一个名为br66的桥。  
+接下来我们可以把已有的网络设备绑定到这个桥上，在这之前可以看看我们有有哪些网卡接口，可以用
+```
+ip addr show
+```
+假设上面查出来，有eth0和eth1两个网卡接口，下面我们把他们用命令绑定到一起
+```
+brctl addif br0 eth0 eth1 # eth0和eth1的顺序不重要，不影响结果
+```
+再来查看绑定关系
+```
+$ brctl show
+bridge name     bridge id               STP enabled     interfaces
+br66             8000.001ec952d26b       yes             eth0
+                                                        eth1
+```
+就是说eth0和eth1绑定到了br0这个桥上了。
+
+
+
+
+
 
 
 
