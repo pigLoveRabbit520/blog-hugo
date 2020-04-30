@@ -117,7 +117,19 @@ ping baidu.com # 成功ping通，确保icmp没有被禁
 ![upload successful](/images/my_docker_ping.png)
 
 
+## Docker网络和虚拟机网络区别
 
+### 虚拟机
+虚拟机，如图，虚拟机通过tun/tap或者其它类似的虚拟网络设备，将虚拟机内的网卡同br0连接起来，这样就达到和真实交换机一样的效果，虚拟机发出去的数据包先到达br0，然后由br0交给eth0发送出去，数据包都不需要经过host机器的协议栈，效率高。  
+
+![image](https://s1.ax1x.com/2020/04/30/Jb090O.png)
+
+### Docker
+docker，如图，由于容器运行在自己单独的network namespace里面，所以都有自己单独的协议栈，情况和上面的虚拟机差不多，但它采用了另一种方式来和外界通信
+
+![](https://s1.ax1x.com/2020/04/30/JbrFNF.png)
+
+容器中配置网关为.9.1，发出去的数据包先到达`br0`，然后交给host机器的协议栈，由于目的IP是外网IP，且host机器开启了`IP forward`功能，于是数据包会通过eth0发送出去，由于.9.1是内网IP，所以一般发出去之前会先做NAT转换（NAT转换和IP forward功能都需要自己配置）。**由于要经过host机器的协议栈，并且还要做NAT转换，所以性能没有上面虚拟机那种方案好**，优点是容器处于内网中，安全性相对要高点。（由于数据包统一由IP层从eth0转发出去，所以不存在mac地址的问题，在无线网络环境下也工作良好）
 
 
 
@@ -126,3 +138,4 @@ ping baidu.com # 成功ping通，确保icmp没有被禁
 * [Linux ip netns 命令](https://www.cnblogs.com/sparkdev/p/9253409.html)
 * [docker网络原理.md](https://github.com/int32bit/notes/blob/master/cloud/docker%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86.md)
 * [Docker 网络之理解 bridge 驱动](https://www.cnblogs.com/sparkdev/p/9217310.html)
+* [Linux内核网络设备——bridge设备](http://blog.nsfocus.net/linux-bridge/)
