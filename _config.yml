@@ -84,7 +84,11 @@ deploy:
     github: git@github.com:salamander-mh/salamander-mh.github.io.git
     coding: git@git.coding.net:salamander/Salamander.git
 
-
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
 
 admin:
   deployCommand: './hexo-deploy.sh'
