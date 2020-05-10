@@ -77,8 +77,7 @@ int main()
     if(!FtpLogin(username, password, con))
     {
         printf("login failed!\n");
-        FtpClose(&con);
-
+        FtpQuit(con);
         return 0;
     }
     printf("Login successfully!\n");
