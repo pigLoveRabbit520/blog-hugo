@@ -157,71 +157,71 @@ static int readresp(char c, netbuf *nControl)
 ```C++
 static int readline(char *buf, int max, netbuf *ctl)
 {
-    int x,retval = 0;
+    int x, retval = 0;
     char *end,*bp=buf;
     int eof = 0;
 
     if ((ctl->dir != FTPLIB_CONTROL) && (ctl->dir != FTPLIB_READ))
-		return -1;
+        return -1;
     if (max == 0)
-		return 0;
+        return 0;
     do
     {
-    	if (ctl->cavail > 0)
-    	{
-			x = (max >= ctl->cavail) ? ctl->cavail : max-1;
-			end = memccpy(bp, ctl->cget, '\n',x);
-			if (end != NULL)
-				x = end - bp;
-			retval += x;
-			bp += x;
-			*bp = '\0';
-			max -= x;
-			ctl->cget += x;
-			ctl->cavail -= x;
-			if (end != NULL)
-			{
-				bp -= 2;
-				if (strcmp(bp,"\r\n") == 0)
-				{
-					*bp++ = '\n';
-					*bp++ = '\0';
-					--retval;
-				}
-				break;
-			}
-    	}
-    	if (max == 1)
-    	{
-			*buf = '\0';
-			break;
-    	}
-    	if (ctl->cput == ctl->cget)
-    	{
-			ctl->cput = ctl->cget = ctl->buf;
-			ctl->cavail = 0;
-			ctl->cleft = FTPLIB_BUFSIZ;
-    	}
-		if (eof)
-		{
-			if (retval == 0)
-				retval = -1;
-			break;
-		}
-		if (!socket_wait(ctl))
-	    	return retval;
-    	if ((x = net_read(ctl->handle, ctl->cput, ctl->cleft)) == -1)
-    	{
-			if (ftplib_debug)
-				perror("read");
-			retval = -1;
-			break;
-    	}
-		if (x == 0)
-	    	eof = 1;
-    	ctl->cleft -= x;
-    	ctl->cavail += x;
-    	ctl->cput += x;
+        if (ctl->cavail > 0)
+        {
+            x = (max >= ctl->cavail) ? ctl->cavail : max-1;
+            end = memccpy(bp, ctl->cget, '\n',x);
+            if (end != NULL)
+                x = end - bp;
+            retval += x;
+            bp += x;
+            *bp = '\0';
+            max -= x;
+            ctl->cget += x;
+            ctl->cavail -= x;
+            if (end != NULL)
+            {
+                bp -= 2;
+                if (strcmp(bp,"\r\n") == 0)
+                {
+                    *bp++ = '\n';
+                    *bp++ = '\0';
+                    --retval;
+                }
+                break;
+            }
+        }
+        if (max == 1)
+        {
+            *buf = '\0';
+            break;
+        }
+        if (ctl->cput == ctl->cget)
+        {
+            ctl->cput = ctl->cget = ctl->buf;
+            ctl->cavail = 0;
+            ctl->cleft = FTPLIB_BUFSIZ;
+        }
+        if (eof)
+        {
+            if (retval == 0)
+                retval = -1;
+            break;
+        }
+        if (!socket_wait(ctl))
+            return retval;
+        if ((x = net_read(ctl->handle, ctl->cput, ctl->cleft)) == -1)
+        {
+            if (ftplib_debug)
+                perror("read");
+            retval = -1;
+            break;
+        }
+        if (x == 0)
+            eof = 1;
+        ctl->cleft -= x;
+        ctl->cavail += x;
+        ctl->cput += x;
     }
     while (1);
     return retval;
@@ -281,16 +281,16 @@ int net_read(int fd, char *buf, size_t len)
 {
     while ( 1 )
     {
-		int c = read(fd, buf, len);
-		if ( c == -1 )
-		{
-			if ( errno != EINTR && errno != EAGAIN )
-			return -1;
-		}
-		else
-		{
-			return c;
-		}
+        int c = read(fd, buf, len);
+        if ( c == -1 )
+        {
+            if ( errno != EINTR && errno != EAGAIN )
+            return -1;
+        }
+        else
+        {
+            return c;
+        }
     }
 }
 ```
