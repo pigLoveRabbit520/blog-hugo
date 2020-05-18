@@ -25,6 +25,50 @@ FTP 每个命令都有 3 到 4 个大写字母组成，命令后面跟参数，�
 常见的FTP命令有：  
 ![](https://s1.ax1x.com/2020/05/12/YNtW3F.png)
 
+### FTP响应码
+客户端发送 FTP 命令后，服务器返回响应码。  
+响应码用**三位数字编码**表示：  
+第一个数字给出了命令状态的一般性指示，比如响应成功、失败或不完整。  
+第二个数字是响应类型的分类，如 2 代表跟连接有关的响应，3 代表用户认证。  
+第三个数字提供了更加详细的信息。  
+
+第一个数字的含义如下：  
+
+* 1 表示服务器正确接收信息，还未处理。
+* 2 表示服务器已经正确处理信息。
+* 3 表示服务器正确接收信息，正在处理。
+* 4 表示信息暂时错误。
+* 5 表示信息永久错误。
+
+第二个数字的含义如下：  
+* 0 表示语法。
+* 1 表示系统状态和信息。
+* 2 表示连接状态。
+* 3 表示与用户认证有关的信息。
+* 4 表示未定义。
+* 5 表示与文件系统有关的信息。
+
+### 例子
+用`客户端登录 FTP 服务器`为例子
+![](https://s1.ax1x.com/2020/05/18/YfCuff.jpg)
+
+大致调用函数过称为：
+```
+/* 命令 ”USER username\r\n” */
+sprintf(send_buf,"USER %s\r\n",username);
+/*客户端发送用户名到服务器端 */
+write(control_sock, send_buf, strlen(send_buf));
+/* 客户端接收服务器的响应码和信息，正常为 ”331 User name okay, need password.” */
+read(control_sock, read_buf, read_len);
+ 
+/* 命令 ”PASS password\r\n” */
+sprintf(send_buf,"PASS %s\r\n",password);
+/* 客户端发送密码到服务器端 */
+write(control_sock, send_buf, strlen(send_buf));
+/* 客户端接收服务器的响应码和信息，正常为 ”230 User logged in, proceed.” */
+read(control_sock, read_buf, read_len);
+```
+
 
 
 ## 源码分析
