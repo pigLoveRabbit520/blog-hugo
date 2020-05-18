@@ -63,17 +63,17 @@ static int FtpSendCmd(const char *cmd, char expresp, netbuf *nControl)
 {
     char buf[TMP_BUFSIZ];
     if (nControl->dir != FTPLIB_CONTROL)
-		return 0;
+        return 0;
     if (ftplib_debug > 2)
-		fprintf(stderr,"%s\n",cmd);
+        fprintf(stderr,"%s\n",cmd);
     if ((strlen(cmd) + 3) > sizeof(buf))
         return 0;
     sprintf(buf,"%s\r\n",cmd);
     if (net_write(nControl->handle, buf, strlen(buf)) <= 0)
     {
-		if (ftplib_debug)
-			perror("write");
-		return 0;
+        if (ftplib_debug)
+            perror("write");
+        return 0;
     }
     return readresp(expresp, nControl);
 }
@@ -91,22 +91,22 @@ int net_write(int fd, const char *buf, size_t len)
     int done = 0;
     while ( len > 0 )
     {
-		int c = write( fd, buf, len );
-		if ( c == -1 )
-		{
-			if ( errno != EINTR && errno != EAGAIN )
-			return -1;
-		}
-		else if ( c == 0 )
-		{
-			return done;
-		}
-		else
-		{
-			buf += c;
-			done += c;
-			len -= c;
-		}
+        int c = write( fd, buf, len );
+        if ( c == -1 )
+        {
+            if ( errno != EINTR && errno != EAGAIN )
+            return -1;
+        }
+        else if ( c == 0 )
+        {
+            return done;
+        }
+        else
+        {
+            buf += c;
+            done += c;
+            len -= c;
+        }
     }
     return done;
 }
@@ -121,32 +121,32 @@ static int readresp(char c, netbuf *nControl)
     char match[5];
     if (readline(nControl->response, RESPONSE_BUFSIZ, nControl) == -1)
     {
-		if (ftplib_debug)
-			perror("Control socket read failed");
-		return 0;
+        if (ftplib_debug)
+            perror("Control socket read failed");
+        return 0;
     }
     if (ftplib_debug > 1)
-		fprintf(stderr,"%s",nControl->response);
+        fprintf(stderr,"%s",nControl->response);
     if (nControl->response[3] == '-')
     {
-		strncpy(match,nControl->response,3);
-		match[3] = ' ';
-		match[4] = '\0';
-		do
-		{
-			if (readline(nControl->response, RESPONSE_BUFSIZ, nControl) == -1)
-			{
-				if (ftplib_debug)
-					perror("Control socket read failed");
-				return 0;
-			}
-			if (ftplib_debug > 1)
-				fprintf(stderr,"%s",nControl->response);
-		}
-		while (strncmp(nControl->response, match, 4));
+        strncpy(match,nControl->response,3);
+        match[3] = ' ';
+        match[4] = '\0';
+        do
+        {
+            if (readline(nControl->response, RESPONSE_BUFSIZ, nControl) == -1)
+            {
+                if (ftplib_debug)
+                    perror("Control socket read failed");
+                return 0;
+            }
+            if (ftplib_debug > 1)
+                fprintf(stderr,"%s",nControl->response);
+        }
+        while (strncmp(nControl->response, match, 4));
     }
     if (nControl->response[0] == c)
-		  return 1;
+          return 1;
     return 0;
 }
 ```
@@ -245,29 +245,29 @@ static int socket_wait(netbuf *ctl)
     struct timeval tv;
     int rv = 0;
     if ((ctl->dir == FTPLIB_CONTROL) || (ctl->idlecb == NULL))
-		return 1;
+        return 1;
     if (ctl->dir == FTPLIB_WRITE)
-		wfd = &fd;
+        wfd = &fd;
     else
-		rfd = &fd;
+        rfd = &fd;
     FD_ZERO(&fd);
     do
     {
-		FD_SET(ctl->handle,&fd);
-		tv = ctl->idletime;
-		rv = select(ctl->handle+1, rfd, wfd, NULL, &tv);
-		if (rv == -1)
-		{
-			rv = 0;
-			strncpy(ctl->ctrl->response, strerror(errno),
-						sizeof(ctl->ctrl->response));
-			break;
-		}
-		else if (rv > 0)
-		{
-			rv = 1;
-			break;
-		}
+        FD_SET(ctl->handle,&fd);
+        tv = ctl->idletime;
+        rv = select(ctl->handle+1, rfd, wfd, NULL, &tv);
+        if (rv == -1)
+        {
+            rv = 0;
+            strncpy(ctl->ctrl->response, strerror(errno),
+                        sizeof(ctl->ctrl->response));
+            break;
+        }
+        else if (rv > 0)
+        {
+            rv = 1;
+            break;
+        }
     }
     while ((rv = ctl->idlecb(ctl, ctl->xfered, ctl->idlearg)));
     return rv;
@@ -300,3 +300,4 @@ int net_read(int fd, char *buf, size_t len)
 
 参考：
 * [使用 Socket 通信实现 FTP 客户端程序](https://www.ibm.com/developerworks/cn/linux/l-cn-socketftp/index.html)
+* [网络编程中的read，write函数](https://www.cnblogs.com/wuchanming/p/3783650.html)
