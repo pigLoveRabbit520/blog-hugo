@@ -55,7 +55,7 @@ struct NetBuf {
 ```
 `handle`字段其实就存了tcp握手成功后的`socket`。
 
-## FtpSendCmd函数
+### FtpSendCmd函数
 
 首先来看`FtpSendCmd`函数，这个函数顾名思义，就是用来发送FTP命令，你在`FtpPwd`、`FtpNlst`、`FtpDir`、`FtpGet`等函数中都可以看到它：
 ```C++
@@ -271,6 +271,27 @@ static int socket_wait(netbuf *ctl)
     }
     while ((rv = ctl->idlecb(ctl, ctl->xfered, ctl->idlearg)));
     return rv;
+}
+```
+
+#### net_read函数
+这个函数简单，用了`read`函数读到了数据，就立马返回，但也要注意，你读10个字节，也不一定能读取10个字节，可能会比10个字节小，因为`read`总是在接收缓冲区有数据时立即返回，而不是等到给定的read buffer填满时返回。
+```
+int net_read(int fd, char *buf, size_t len)
+{
+    while ( 1 )
+    {
+		int c = read(fd, buf, len);
+		if ( c == -1 )
+		{
+			if ( errno != EINTR && errno != EAGAIN )
+			return -1;
+		}
+		else
+		{
+			return c;
+		}
+    }
 }
 ```
 
