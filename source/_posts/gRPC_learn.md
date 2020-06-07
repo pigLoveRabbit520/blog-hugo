@@ -58,18 +58,18 @@ $ protoc -h
   --ruby_out=OUT_DIR          Generate Ruby source file.
 ...
 ```
+我们借助`Go Modules`来安装，新建一个目录grpc-test，在目录下执行`go mod init grpc-test`创建一个Module  
+因为墙的原因，我们在`go get`之前要设置proxy（或者把GOPROXY设置`.bashrc`文件）
+```
+$ export GOPROXY=https://goproxy.cn
+```
+然后执行
+
 ```
 go get -u github.com/golang/protobuf/protoc-gen-go
 ```
-因为墙的原因，上面的go get命名会失败，我们需要如下设置代理：
-```
-export http_proxy=http://127.0.0.1:10809
-export https_proxy=http://127.0.0.1:10809
+执行完就可以在`$GOPATH`的bin目录下看到**protoc-gen-go**文件。
 
-# git设置代理
-git config --global http.https://go.googlesource.com.proxy socks5://127.0.0.1:10808
-git config --global http.https://go.googlesource.com.proxy socks5://127.0.0.1:10808
-```
 
 
 
