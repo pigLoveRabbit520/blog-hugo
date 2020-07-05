@@ -192,3 +192,8 @@ Breakpoint 1, main () at hello.c:8
 (gdb) p a
 $1 = 1
 ```
+
+
+
+参考：
+* [Linux 高级编程 - 15 个 gdb 调试基础命令](https://dlonng.com/posts/gdb)
