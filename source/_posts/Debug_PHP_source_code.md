@@ -118,4 +118,10 @@ $3 = {value = {lval = 10, dval = 4.9406564584124654e-323, counted = 0xa, str = 0
     fe_pos = 4294967295, fe_iter_idx = 4294967295, access_flags = 4294967295, property_guard = 4294967295, extra = 4294967295}}
 ```
 我们第一行PHP代码是`$a = 10;`，这是一条赋值语句,`ZEND_ASSIGN_SPEC_CV_CONST_RETVAL_UNUSED_HANDLER`是把一个常量赋值给一个变量，`EX_CONSTANT(opline->op2)`是获取常量的值，`$a`为CV变量，分配在zend_execute_data动态变量区，通过`_get_zval_ptr_cv_undef_BP_VAR_W`取到这个变量的地址，剩下的好理解了，就是把变量值赋值给CV变量。  
-`value`就是我们的变量值，`$a`对应的底层变量就是它。  
+`value`就是我们的变量值，`$a`对应的底层变量就是它。
+
+
+
+
+参考：
+* [PHP 7 中函数调用的实现](http://yangxikun.github.io/php/2016/11/04/php-7-func-call.html)
