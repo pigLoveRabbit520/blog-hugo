@@ -118,7 +118,72 @@ $3 = {value = {lval = 10, dval = 4.9406564584124654e-323, counted = 0xa, str = 0
     fe_pos = 4294967295, fe_iter_idx = 4294967295, access_flags = 4294967295, property_guard = 4294967295, extra = 4294967295}}
 ```
 我们第一行PHP代码是`$a = 10;`，这是一条赋值语句,`ZEND_ASSIGN_SPEC_CV_CONST_RETVAL_UNUSED_HANDLER`是把一个常量赋值给一个变量，`EX_CONSTANT(opline->op2)`是获取常量的值，`$a`为CV变量，分配在zend_execute_data动态变量区，通过`_get_zval_ptr_cv_undef_BP_VAR_W`取到这个变量的地址，剩下的好理解了，就是把变量值赋值给CV变量。  
-`value`就是我们的变量值，`$a`对应的底层变量就是它。
+`value`就是我们的变量值，`$a`对应的底层变量就是它。  
+回忆一下PHP7变量的数据结构，是一个叫`zval`的结构体，`zend_value`保存具体的变量值：
+```
+typedef union _zend_value {
+	zend_long         lval;				/* long value */
+	double            dval;				/* double value */
+	zend_refcounted  *counted;
+	zend_string      *str;
+	zend_array       *arr;
+	zend_object      *obj;
+	zend_resource    *res;
+	zend_reference   *ref;
+	zend_ast_ref     *ast;
+	zval             *zv;
+	void             *ptr;
+	zend_class_entry *ce;
+	zend_function    *func;
+	struct {
+		uint32_t w1;
+		uint32_t w2;
+	} ww;
+} zend_value;
+
+struct _zval_struct {
+	zend_value        value;			/* value */
+	union {
+		struct {
+			ZEND_ENDIAN_LOHI_4(
+				zend_uchar    type,			/* 变量类型 */
+				zend_uchar    type_flags,
+				zend_uchar    const_flags,
+				zend_uchar    reserved)	    /* call info for EX(This) */
+		} v;
+		uint32_t type_info;
+	} u1;
+	union {
+		uint32_t     next;                 /* hash collision chain */
+		uint32_t     cache_slot;           /* literal cache slot */
+		uint32_t     lineno;               /* line number (for ast nodes) */
+		uint32_t     num_args;             /* arguments number for EX(This) */
+		uint32_t     fe_pos;               /* foreach position */
+		uint32_t     fe_iter_idx;          /* foreach iterator index */
+		uint32_t     access_flags;         /* class constant access flags */
+		uint32_t     property_guard;       /* single property guard */
+		uint32_t     extra;                /* not further specified */
+	} u2;
+};
+
+#define IS_UNDEF                                        0
+#define IS_NULL                                         1
+#define IS_FALSE                                        2
+#define IS_TRUE                                         3
+#define IS_LONG                                         4
+#define IS_DOUBLE                                       5
+#define IS_STRING                                       6
+#define IS_ARRAY                                        7
+#define IS_OBJECT                                       8
+#define IS_RESOURCE                                     9
+#define IS_REFERENCE                                    10
+
+/* constant expressions */
+#define IS_CONSTANT                                     11
+#define IS_CONSTANT_AST                                 12
+
+```
+我们打印出来的底层变量，`lval`是10，`u1`里的`type`是4，也正好是`IS_LONG`，别的字段的值大家也可以分析看看。
 
 
 
