@@ -18,7 +18,7 @@ Kubernetes，简称 **k8s**（k，8 个字符，s——明白了？）或者 “
 * OS：Ubuntu 18.04.3 LTS
 * Vagrant版本：2.2.6
 * VirtualBox版本：6.0.14 r133895 (Qt5.9.5)
-* Kubernetes版本：1.15.7
+* Kubernetes版本：1.16.3
 
 <!-- more -->
 
@@ -171,6 +171,7 @@ ubuntu/xenial64 (virtualbox, 20191217.0.0)
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+k8sVersion = '1.16.3'
 servers = [
     {
         :name => "k8s-head",
@@ -251,7 +252,7 @@ EOF'
     deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
 EOF
     apt-get update
-    apt-get install -y kubelet=1.15.7-00 kubeadm=1.15.7-00 kubectl=1.15.7-00
+    apt-get install -y kubelet=#{k8sVersion}-00 kubeadm=#{k8sVersion}-00 kubectl=#{k8sVersion}-00
     apt-mark hold kubelet kubeadm kubectl
     # kubelet requires swap off
     swapoff -a
@@ -272,7 +273,7 @@ $configureMaster = <<-SCRIPT
     IP_ADDR=`ifconfig enp0s8 | grep Mask | awk '{print $2}'| cut -f2 -d:`
     # install k8s master
     HOST_NAME=$(hostname -s)
-    kubeadm init --image-repository registry.aliyuncs.com/google_containers  --kubernetes-version v1.15.7 \
+    kubeadm init --image-repository registry.aliyuncs.com/google_containers  --kubernetes-version v#{k8sVersion} \
     --apiserver-advertise-address=$IP_ADDR --apiserver-cert-extra-sans=$IP_ADDR  --node-name $HOST_NAME --pod-network-cidr=172.16.0.0/16
     #copying credentials to regular user - vagrant
     sudo --user=vagrant mkdir -p /home/vagrant/.kube
@@ -281,8 +282,10 @@ $configureMaster = <<-SCRIPT
 
     # install Calico pod network addon
     export KUBECONFIG=/etc/kubernetes/admin.conf
-    kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
-    kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+    wget https://docs.projectcalico.org/v3.10/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+    # Pod的ip范围
+    sed -i 's/192.168.0.0/172.16.0.0/g' calico.yaml
+    kubectl apply -f calico.yaml
     kubeadm token create --print-join-command >> /etc/kubeadm_join_cmd.sh
     chmod +x /etc/kubeadm_join_cmd.sh
     # required for setting up password less ssh between guest VMs
