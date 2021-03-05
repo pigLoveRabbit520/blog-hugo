@@ -9,6 +9,7 @@ date: 2021-03-05 09:00:00
 ![Puppeteer](https://s3.ax1x.com/2021/03/05/6eGwVJ.png)  
 这篇文章很简单呢，就是记录一下用**Puppeteer**的一些snippet。
 
+<!-- more -->
 
 
 ## 访问网站后截图
