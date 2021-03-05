@@ -21,7 +21,7 @@ jobs:
       uses: actions/checkout@master
 
     - name: Build and Deploy
-      uses: renzhaosy/hexo-deploy-action@master
+      uses: salamander-mh/salamander-mh.github.io@master
       env:
         PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PUBLISH_REPOSITORY: renzhaosy/renzhaosy.github.io # The repository the action should deploy to.
