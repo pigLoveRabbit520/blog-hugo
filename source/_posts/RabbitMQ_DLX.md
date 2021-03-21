@@ -169,7 +169,25 @@ begin consuming messages...
 
 ## 死信队列问题
 RabbitMQ中，每个消息的过期不是独立的，一个队列里的某个消息即使比同队列中的其它消息提前过期，也不会优先进入到死信队列，**只有当过期的消息到了队列的顶端，才会被真正的丢弃或者进入死信队列**。  
-我们把**生产者**的代码调整下，先发一个20s过期的消息，再发一个3s过期的消息，观察**消费者**输出：  
+我们把**生产者**的代码调整下，先发一个20s过期的消息，再发一个3s过期的消息
+```
+....
+async function testSend() {
+    const conn = await getMQConnection()
+    await run(conn, {
+        content: (new Date()).toLocaleString() + ' 20s过期 ',
+        expiration: '20000',
+    })
+    await run(conn, {
+        content: (new Date()).toLocaleString() + ' 3s过期 ',
+        expiration: '3000',
+    })
+    await conn.close()
+}
+```
+
+观察**消费者**输出： 
+
 ```
 $ node consumer.js 
 begin consuming messages...
