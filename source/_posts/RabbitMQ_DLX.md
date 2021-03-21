@@ -5,8 +5,13 @@ tags:
 categories: []
 date: 2021-03-20 23:27:00
 ---
+<img src="/images/RabbitMQ-Logo.png" width="800px">  
+
+
 ## 业务需求
 有时候我们需要某些任务定时执行，譬如取消订单，5分钟没支付，这个订单就被取消。简单实现的话，我们可以使用`Redis`或Linux的**crontab**来实现，而对于RabbitMQ，我们则可以用它的`死信队列`来实现定时任务。
+
+<!-- more -->
 
 
 ## DLX
@@ -152,7 +157,8 @@ module.exports = {
     vhost: '/'
 }
 ```  
-上面的代码，我们让消息3s后过期，先启动**消费者**，再启动生产者，我们可以看到消息3s后过期:
+上面的代码，我们让消息3s后过期，先启动**消费者**，再启动生产者，我们可以看到消息3s后过期:  
+
 ```
 $ node consumer.js 
 begin consuming messages...
