@@ -2,8 +2,9 @@ title: RabbitMQ四五事之死信队列
 author: Salamander
 tags:
   - RabbitMQ
-categories: []
-date: 2021-03-20 23:27:00
+categories:
+  - RabbitMQ
+date: 2021-03-20 20:27:00
 ---
 <img src="/images/RabbitMQ-Logo.png" width="800px">  
 
@@ -367,11 +368,14 @@ begin consuming messages...
 ### 局限性
 没有什么东西是完美的，这个插件也不例外。看下这个插件的`Performance Impact`部分：
 ```
-For each message that crosses an "x-delayed-message" exchange, the plugin will try to determine if the message has to be expired by making sure the delay is within range, ie: Delay > 0, Delay =< ?ERL_MAX_T (In Erlang a timer can be set up to (2^32)-1 milliseconds in the future).
+For each message that crosses an "x-delayed-message" exchange, 
+the plugin will try to determine if the message has to be expired by making sure the delay is within range, 
+ie: Delay > 0, Delay =< ?ERL_MAX_T (In Erlang a timer can be set up to (2^32)-1 milliseconds in the future).
 ```
 延迟时间最大为 (2^32)-1 毫秒，大约 49 天。另外这个插件也不适合大量延迟消息（例如数十万或数百万）的场景，`Limitations`也写了：
 ```
-Current design of this plugin doesn't really fit scenarios with a high number of delayed messages (e.g. 100s of thousands or millions). See #72 for details.
+Current design of this plugin doesn't really fit scenarios with a high number of delayed messages 
+(e.g. 100s of thousands or millions). See #72 for details.
 ```
 
 参考：
