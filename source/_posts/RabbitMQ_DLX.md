@@ -135,7 +135,7 @@ async function run(rmqConn) {
     }
 }
 
-async function testSend() {
+async function testConsume() {
     const conn = await getMQConnection();
     console.log('begin consuming messages...');
     await run(conn);
@@ -145,7 +145,7 @@ async function testSend() {
         conn.close();
     });
 }
-testSend();
+testConsume();
 ```
 **config.js**  
 ```
@@ -200,9 +200,169 @@ begin consuming messages...
 
 ## 解决队列消息非异步
 
+RabbitMQ 本身没有这种功能，但是它有个插件可以解决这个问题：**rabbitmq_delayed_message_exchange**，[地址](https://github.com/rabbitmq/rabbitmq-delayed-message-exchange) 。  
+这个插件的介绍如下：
+> A user can declare an exchange with the type x-delayed-message and then publish messages with the custom header x-delay expressing in milliseconds a delay time for the message. The message will be delivered to the respective queues after x-delay milliseconds.  
 
+这个插件增加了一种新类型的`exchange`：**x-delayed-message**，然后只要发送消息时指定的是这个交换机，那么只需要在消息 header 中指定参数 x-delay [:毫秒值] 就能够实现每条消息的异步延时。  
 
+### 添加插件
+用了Docker之后，添加这个插件非常简单，添加`Dockerfile`：
+```
+FROM rabbitmq:3.8.12-management
+COPY ./rabbitmq_delayed_message_exchange-3.8.9-0199d11c.ez /plugins
+RUN rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+```
+插件可以在[Release页](https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases)下载。  
+**docker-compose.yml**改下：
+```
+version: "2"
+services:
+  mq:
+    build: .
+    restart: always
+    mem_limit: 2g
+    hostname: mq1
+    volumes:
+      - ./mnesia:/var/lib/rabbitmq/mnesia
+      - ./log:/var/log/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    ports:
+      - "55672:15672"
+      - "5672:5672"
+    environment:
+      - CONTAINER_NAME=rabbitMQ
+      - RABBITMQ_ERLANG_COOKIE=3t182q3wtj1p9z0kd3tb
+```
+这样插件就安装成功了。  
 
+### 修改代码
+**producer.js**
+```
+const config = require("./config");
+const amqp = require('amqplib');
+
+async function getMQConnection() {
+    return await amqp.connect({
+        protocol: 'amqp',
+        hostname: config.host,
+        port: config.port,
+        username: config.user,
+        password: config.pass,
+        locale: 'en_US',
+        frameMax: 0,
+        heartbeat: 5, // 心跳
+        vhost: config.vhost,
+    })
+}
+
+async function run(rmqConn, msgObj) {
+    const exchangeDelay = 'testExNewDelay';
+    const queueDLX = 'testQueueDLX';
+    const routingKeyDLX = 'testRoutingKeyDLX';
+
+    try {
+        const channel = await rmqConn.createChannel();
+
+        // x-delayed-message类型的exchange
+        await channel.assertExchange(exchangeDelay, 'x-delayed-message', { durable: true, autoDelete: false, arguments: {'x-delayed-type':  "direct"} });
+        await channel.assertQueue(queueDLX, {durable: true, autoDelete: false, });
+        await channel.bindQueue(queueDLX, exchangeDelay, routingKeyDLX);
+
+        // 发送消息
+        await channel.publish(exchangeDelay, routingKeyDLX, Buffer.from(msgObj.content), {
+            headers: {"x-delay": msgObj.expiration}, // ms
+            persistent: true,
+            mandatory: true,
+        });
+        console.log('send message successfully.')
+        await channel.close();
+    } catch(err) {
+        console.log('send message failed:' + err.message)
+    }
+}
+
+async function testSend() {
+    const conn = await getMQConnection()
+    await run(conn, {
+        content: (new Date()).toLocaleString() + ' 20s过期 ',
+        expiration: '20000',
+    })
+    await run(conn, {
+        content: (new Date()).toLocaleString() + ' 3s过期 ',
+        expiration: '3000',
+    })
+    await conn.close()
+}
+testSend();
+```
+
+`x-delayed-type`告诉插件在给定的延迟时间过去之后，exchange应该跟`direct`，`fanout`，`topic`中的exchange路由功能一样。  
+
+**consumer.js**  
+```
+const config = require("./config");
+const amqp = require('amqplib');
+
+async function getMQConnection() {
+    return await amqp.connect({
+        protocol: 'amqp',
+        hostname: config.host,
+        port: config.port,
+        username: config.user,
+        password: config.pass,
+        locale: 'en_US',
+        frameMax: 0,
+        heartbeat: 5, // 心跳
+        vhost: config.vhost,
+    })
+}
+
+async function run(rmqConn) {
+    const exchangeDelay = 'testExNewDelay';
+    const queueDLX = 'testQueueDLX';
+    const routingKeyDLX = 'testRoutingKeyDLX';
+
+    try {
+        const channel = await rmqConn.createChannel();
+
+        // x-delayed-message类型的exchange
+        await channel.assertExchange(exchangeDelay, 'x-delayed-message', { durable: true, autoDelete: false, arguments: {'x-delayed-type':  "direct"} });
+        await channel.assertQueue(queueDLX, {durable: true, autoDelete: false, });
+        await channel.bindQueue(queueDLX, exchangeDelay, routingKeyDLX);
+
+        // 处理死信队列消息
+        await channel.consume(queueDLX, msg => {
+            console.log(`[${(new Date()).toLocaleString()}] consumer msg：`, msg.content.toString());
+        }, { noAck: true });
+    } catch(err) {
+        console.log('consume message failed:' + err.message)
+    }
+}
+
+async function testConsume() {
+    const conn = await getMQConnection();
+    console.log('begin consuming messages...');
+    await run(conn);
+
+    process.on('SIGINT', () => {
+        console.log('stop consumer.')
+        conn.close();
+    });
+}
+
+testConsume();
+```
+
+### 测试效果
+执行**生产者**代码之后，我们可以看到**消费者**输出：
+```
+$ node consumer.js 
+begin consuming messages...
+[2021/3/22 下午2:16:37] consumer msg： 2021/3/22 下午2:16:34 3s过期 
+[2021/3/22 下午2:16:54] consumer msg： 2021/3/22 下午2:16:34 20s过期
+```
+可以发现，消息已经独立的过期了。
 
 参考：
 * [RabbitMQ 死信机制真的可以作为延时任务这个场景的解决方案吗？](https://www.skypyb.com/2020/01/jishu/1206/)
