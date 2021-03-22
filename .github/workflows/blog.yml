@@ -49,6 +49,6 @@ jobs:
 
       - name: Upload to qiniu
         run: |
-          curl -L https://file.51lucy.com/qshell -o /usr/local/bin/qshell
-          chmod +x /usr/local/bin/qshell
+          sudo curl -L https://file.51lucy.com/qshell -o /usr/local/bin/qshell
+          sudo chmod +x /usr/local/bin/qshell
           qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} meng
