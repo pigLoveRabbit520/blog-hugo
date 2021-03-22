@@ -52,3 +52,5 @@ jobs:
           sudo curl -L http://file.51lucy.com/qshell -o /usr/local/bin/qshell
           sudo chmod +x /usr/local/bin/qshell
           qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} meng
+          qshell listbucket blog-cn -o ~/blog-cn.list.txt
+          qshell batchdelete --force blog-cn -i ~/blog-cn.list.txt
