@@ -151,7 +151,7 @@ testSend();
 ```
 module.exports = {
     host: '127.0.0.1',
-    port: 56720,
+    port: 5672,
     user: 'test',
     pass: '************',
     vhost: '/'
