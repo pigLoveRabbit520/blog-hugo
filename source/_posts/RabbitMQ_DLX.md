@@ -376,3 +376,4 @@ Current design of this plugin doesn't really fit scenarios with a high number of
 
 参考：
 * [RabbitMQ 死信机制真的可以作为延时任务这个场景的解决方案吗？](https://www.skypyb.com/2020/01/jishu/1206/)
+* [RabbitMQ 延迟队列插件 x-delay Bug](http://blog.lbanyan.com/rabbitmq_delay/)
