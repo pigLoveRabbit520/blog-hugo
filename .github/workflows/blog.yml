@@ -58,9 +58,9 @@ jobs:
           qshell batchdelete --force blog-cn -i ~/blog-cn.list.txt
           work_path=$(dirname $(readlink -f $0))
           echo > ~/upload.conf <<EOF
-{
-    "src_dir" : "${work_path}/public",
-    "bucket" : "blog-cn"
-}
+              {
+                  "src_dir" : "${work_path}/public",
+                  "bucket" : "blog-cn"
+              }
           EOF
           qshell -c 5 qupload ~/upload.conf
