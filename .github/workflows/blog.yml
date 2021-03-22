@@ -50,7 +50,7 @@ jobs:
       - name: Upload to qiniu
         working-directory: .
         run: |
-          hexo generate
+          hexo generate && pwd && ls
           sudo curl -L http://file.51lucy.com/qshell -o /usr/local/bin/qshell
           sudo chmod +x /usr/local/bin/qshell
           qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} meng
@@ -58,4 +58,4 @@ jobs:
           qshell batchdelete --force blog-cn -i ~/blog-cn.list.txt
           work_path=$(dirname $(readlink -f $0))
           echo -e "{ \"src_dir\": \"${work_path}/public\", \n \"bucket\": \"blog-cn\" }" > ~/upload.conf
-          qshell -c 5 qupload ~/upload.conf
+          pwd && qshell -c 5 qupload ~/upload.conf
