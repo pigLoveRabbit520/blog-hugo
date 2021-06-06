@@ -36,3 +36,38 @@ console.log(sayHello(user));
 注意： **TypeScript** 只会在编译时对类型进行静态检查，如果发现有错误，编译的时候就会报错。而在运行时，与普通的 JavaScript 文件一样，不会对类型进行检查。
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+参考：
+* [TypeScript 中文手册](https://typescript.bootcss.com/tutorials/typescript-in-5-minutes.html)
