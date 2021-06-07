@@ -53,7 +53,8 @@ MyProj
 ├── .eslintrc.js
 ```  
 
-**tsconfig.json**
+**tsconfig.json**  
+
 ```
 {
   "compilerOptions": {
