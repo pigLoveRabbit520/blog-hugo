@@ -50,11 +50,9 @@ MyProj
 │   ├── animal.js
 ├── package.json
 ├── tsconfig.json
-├── .eslintrc.js
-```  
-
-**tsconfig.json**  
-
+├── .eslintrc.js  
+```
+tsconfig.json文件  
 ```
 {
   "compilerOptions": {
