@@ -30,3 +30,13 @@ ulimit -c unlimited
 gcore [-o filename] pid
 ```
 但在容器中，gcore命令会报错。
+
+
+
+
+
+
+
+
+参考：
+* [Node.js 调试指南](https://www.bookstack.cn/read/node-in-debugging/2.1gcorellnode.md)
