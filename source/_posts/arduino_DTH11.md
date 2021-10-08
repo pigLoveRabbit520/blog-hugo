@@ -115,7 +115,11 @@ void setup() {
     Serial.println (" device(s).");
 } // end of setup
 void loop() {}
-```
+```  
+
+![upload successful](/images/iic_address.png)  
+可以看到默认地址是`0x27`  
+
 
 ### 安装驱动库
 LCD1602的驱动库都是要额外装的。  
