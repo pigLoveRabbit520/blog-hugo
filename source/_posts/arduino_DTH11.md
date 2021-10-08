@@ -127,11 +127,35 @@ LCD1602的驱动库都是要额外装的。
 ![upload successful](/images/arduino_library.png)
 
 
+### 显示字符
+代码挺简单的：  
+```
+// meng
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h> //引用I2C库
+ 
+//设置LCD1602设备地址，这里的地址是0x3F，一般是0x20，或者0x27，具体看模块手册
+LiquidCrystal_I2C lcd(0x27, 16, 2);  
 
-
-
-
-
+void setup()
+{
+  lcd.init();                  // 初始化LCD
+  lcd.backlight();             //设置LCD背景等亮
+}
+ 
+void loop()
+{
+  lcd.setCursor(0,0);                // 设置显示指针
+  lcd.print("Pig Love Rabbit");     // 输出字符到LCD1602上
+  lcd.setCursor(0,1);
+  lcd.print("       by MH.");
+  delay(1000);
+  lcd.setBacklight(LOW); // 关掉背光 delay(1000);
+  delay(1000);  
+  lcd.setBacklight(HIGH);
+}
+```
+最终显示效果：![](https://z3.ax1x.com/2021/10/08/5PI7e1.jpg)
 
 
 
