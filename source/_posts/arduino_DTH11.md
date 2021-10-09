@@ -166,7 +166,51 @@ void loop()
 
 
 
+## 显示温湿度
+加载DTH的库： [github](https://github.com/RobTillaart/DHTlib)，用Arduino也可以直接搜到  
 
+代码：  
+```
+// meng
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h> //引用I2C库
+#include <dht.h>
+
+ 
+//设置LCD1602设备地址，这里的地址是0x3F，一般是0x20，或者0x27，具体看模块手册
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+#define dataPin 2
+dht DHT; // Creats a DHT object
+
+void setup()
+{
+  lcd.init();                  // 初始化LCD
+  lcd.backlight();             //设置LCD背景等亮
+}
+ 
+void loop()
+{
+  int readData = DHT.read11(dataPin); // 读取数据
+  float t = DHT.temperature; // 温度
+  float h = DHT.humidity;    // 湿度
+
+  lcd.setCursor(0,0);                // 设置显示指针
+
+  // 显示温度
+  lcd.print("Temp: ");
+  lcd.print(t); // Prints the temperature value from the sensor
+  lcd.print(" ");
+  lcd.print((char)223);//shows degrees character
+  lcd.print("C");
+  
+  lcd.setCursor(0,1);
+  lcd.print("Humi: ");
+  lcd.print(h);
+  lcd.print(" %");
+  delay(3000);
+}
+```
 
 
 
