@@ -28,7 +28,7 @@ DLX其实就是一个普通的交换器，要使用它也很简单，就是在�
 ## 简单例子
 用之前文章[RabbitMQ二三事](https://segmentfault.com/a/1190000018685360)快速启动RabbitMQ的服务，再把[RabbitMQ三四事](https://segmentfault.com/a/1190000019227064)的代码改造下。  
 **producer.js**  
-```
+```JavaScript
 const config = require("./config");
 const amqp = require('amqplib');
 
@@ -94,7 +94,7 @@ async function testSend() {
 testSend();
 ```
 **consumer.js**  
-```
+```JavaScript
 const config = require("./config");
 const amqp = require('amqplib');
 
@@ -239,7 +239,7 @@ services:
 
 ### 修改代码
 **producer.js**
-```
+```JavaScript
 const config = require("./config");
 const amqp = require('amqplib');
 
@@ -301,7 +301,7 @@ testSend();
 `x-delayed-type`告诉插件在给定的延迟时间过去之后，exchange应该跟`direct`，`fanout`，`topic`中的exchange路由功能一样。  
 
 **consumer.js**  
-```
+```JavaScript
 const config = require("./config");
 const amqp = require('amqplib');
 
