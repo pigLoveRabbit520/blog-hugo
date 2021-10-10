@@ -167,10 +167,21 @@ void loop()
 
 
 ## 显示温湿度
-加载DTH的库： [github](https://github.com/RobTillaart/DHTlib)，用Arduino也可以直接搜到  
+
+### 加载DHT的库
+为了能读取DHT11的数据，我们需要引入新的库，这里我们用了这个库：[DHTlib](https://github.com/RobTillaart/DHTlib)，用Arduino也可以直接搜到  
+
+![upload successful](/images/DHTlib.png)  
+
+### 接线
+
+![upload successful](/images/dht_lcd_final.png)  
+接线蛮简单的，DHT就用到了3个脚，需要注意的是**在VCC和DHT11的DATA脚之间放置一个10KΩ的上拉电阻**，以使其保持高电平，以实现传感器和MCU之间的正确通信。
+
+
 
 代码：  
-```
+```C++
 // meng
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h> //引用I2C库
@@ -192,6 +203,7 @@ void setup()
 void loop()
 {
   int readData = DHT.read11(dataPin); // 读取数据
+  // int readData =  DHT.read22(dataPin); // DHT22/AM2302
   float t = DHT.temperature; // 温度
   float h = DHT.humidity;    // 湿度
 
@@ -211,6 +223,9 @@ void loop()
   delay(3000);
 }
 ```
+
+最终，我们实现了把DHT11的温湿度显示到LCD上的效果了：  
+![](https://z3.ax1x.com/2021/10/10/5kxeUS.jpg)  
 
 
 
