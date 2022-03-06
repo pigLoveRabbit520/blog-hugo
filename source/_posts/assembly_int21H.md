@@ -52,25 +52,35 @@ DOS 系统功能调用 `INT 21H`，有数百种功能供用户使用。下面介
 ## 一些例子
 汇编代码中，大写和小写没关系，所以这里ah和AH，dx和DX也没问题。还有4H和4也是一样的，汇编中默认都是16进制。
 
-#### 显示一个字符：
+#### 显示一个字符
 ```
-assume cs:code
+assume cs:code, ds:data
+  
+; 数据段
+data segment  
+    MESSAGE DB 'hello'
+data ends
 
-code segment
+; 代码段
+code segment  
+start: 
+    mov AX, data
+    mov DS, AX
 
-start:
-    MOV  DL,'l'
+    mov DL, DS:[1H]
+
     ;调用DOS系统功能，2表示输出DL寄存器的字符到显示器
-    MOV  AH,2h
-    INT  21H
+    mov AH, 2H
+    int 21H
+    
     ;返回DOS
-    MOV AH, 4CH
-    INT 21H
-
-code ends
+    mov AH, 4CH
+    int 21H
+     
+code ends     
 end start
 ```
-
+这个程序会输出一个`e`的字符。
 
 #### 打印hello world
 代码是用别人的，他的注释写的蛮好的：
