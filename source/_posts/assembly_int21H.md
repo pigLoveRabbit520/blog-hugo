@@ -50,7 +50,7 @@ DOS 系统功能调用 `INT 21H`，有数百种功能供用户使用。下面介
 
 
 ## 一些例子
-汇编代码中，大写和小写没关系，所以这里ah和AH，dx和DX也没问题。还有4H和4也是一样的，汇编中默认都是16进制。
+汇编代码中，指令和寄存器名大写和小写没关系，所以这里ah和AH，dx和DX也没问题。但是4H和4还是有点不一样的，`4H`是16进制，不带h表示10进制。
 
 #### 显示一个字符
 ```
@@ -58,24 +58,24 @@ assume cs:code, ds:data
   
 ; 数据段
 data segment  
-    MESSAGE DB 'hello'
+    message db 'hello'
 data ends
 
 ; 代码段
 code segment  
 start: 
-    mov AX, data
-    mov DS, AX
+    mov ax, data
+    mov ds, ax
 
-    mov DL, DS:[1H]
+    mov dl, ds:[1h]
 
     ;调用DOS系统功能，2表示输出DL寄存器的字符到显示器
-    mov AH, 2H
-    int 21H
+    mov ah, 2h
+    int 21h
     
     ;返回DOS
-    mov AH, 4CH
-    int 21H
+    mov ah, 4ch
+    int 21h
      
 code ends     
 end start
