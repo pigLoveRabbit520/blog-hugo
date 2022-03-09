@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Salamander的博客
-subtitle: Salamander的博客
+title: pigLoveRabbit的博客
+subtitle: pigLoveRabbit的博客
 description: 一个简单的博客
-keywords: 博客 Salamander 算法 云计算 Docker k8s MySQL MongoDB
-author: Salamander
+keywords: 博客 pigLoveRabbit 算法 云计算 Docker k8s MySQL MongoDB
+author: pigLoveRabbit
 avatar: https://avatars3.githubusercontent.com/u/16663435?s=460&v=4
 language: zh-CN
 timezone: Asia/Shanghai
