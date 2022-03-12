@@ -113,12 +113,12 @@ start:
     ; 还可以写成 mov dx, 0H
     mov dx, offset hello  
     ; 打印字符串，ah=9H代表打印
-    mov AH, 9H
-    int 21H
+    mov ah, 9h
+    int 21h
     
     ; 正常退出程序，相当于高级语言的 return 0
-    mov AH, 4CH
-    int 21H
+    mov ah, 4ch
+    int 21h
      
 code ends     
 end start
