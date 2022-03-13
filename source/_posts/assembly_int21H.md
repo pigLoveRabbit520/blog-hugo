@@ -124,7 +124,83 @@ code ends
 end start
 ```
 
+#### 读取键盘输入
+这个例子复杂了点
+```
+assume cs:code, ds:data, ss:stack
+
+stack segment
+    db 100 dup(0)
+stack ends
+  
+; 数据段
+data segment
+    db 20, 20 dup (0)
+    message db 'input a number:$'
+data ends
+
+code segment
+start:
+    mov ax, data
+    mov ds, ax
+    call printMsg
+    call readInput
+    call atoi
+
+    mov ah, 4ch
+    int 21h
+
+printMsg:
+    mov dx, offset message
+    mov ah, 9h
+    int 21h
+    ret
+
+readInput:
+    ; first byte to tell dos maximum characters buffer can hold
+    mov dx, 0h
+    mov ah, 0Ah
+    int 21h
+    ret
+
+atoi:
+    mov bx, 1h
+    mov cl, [bx]
+s:  inc bx
+    mov ax, 0
+    ;'0' ASCII 30h
+    add al, [bx]
+    sub ax, 0030h
+    mov [bx], al
+    loop s
+    ret
+
+code ends     
+end start
+```
+
+
+## 调试工具DEBUG常用命令
+
+##### R ——查看和修改寄存器
+##### D ——查看内存单元
+内存每16个字节单元为一小段，逻辑段必须从小段的首址开始。用D命令可以查看存储单元的地址和内容。  
+D命令格式为：  
+```
+D  段地址:起始偏移地址 [结尾偏移地址] [L范围]
+```
+例如：  
+```
+D DS:0      查看数据段，从0号单元开始  
+D ES:0      查看附加段，从0号单元开始  
+D DS:100   查看数据段，从100H号单元开始  
+D 0200:5 15   查看0200H段的5号单元到15H号单元（在虚拟机上该命令不能执行）  
+D 0200:5 L 11  用L选择范围。查看0200H段的5号单元到15H号单元共10个单元  
+```
+##### T /P——单步执行
+P可以跳过子程序或系统调用，其他方面T和P是类型的。
 
 
 参考：
 * [从零入门8086汇编](https://juejin.cn/post/6844903866153041928)
+* [调试工具DEBUG](https://www.cnblogs.com/lfri/p/10780994.html)
