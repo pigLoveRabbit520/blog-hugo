@@ -130,19 +130,30 @@ end start
 assume cs:code, ds:data, ss:stack
 
 stack segment
-    db 100 dup(0)
+    dw 30h dup(0)
 stack ends
   
 ; 数据段
 data segment
-    db 20, 20 dup (0)
+    buf db 20h, 0, 20h dup (0)
     message db 'input a number:$'
+    num dw ?
 data ends
 
 code segment
 start:
     mov ax, data
     mov ds, ax
+    call printMsg
+    call readInput
+    call atoi
+    push num
+
+    mov dl, 0Ah
+    mov ah, 02h
+    int 21h
+
+    ; again
     call printMsg
     call readInput
     call atoi
@@ -163,17 +174,32 @@ readInput:
     int 21h
     ret
 
-atoi:
-    mov bx, 1h
-    mov cl, [bx]
-s:  inc bx
-    mov ax, 0
-    ;'0' ASCII 30h
-    add al, [bx]
-    sub ax, 0030h
-    mov [bx], al
-    loop s
+atoi proc
+	mov dx,0
+	mov bx,10
+	mov si,2
+	mov num,0
+	mov ax,0
+lop:
+    mov al,buf[si]
+    cmp al,0Dh
+    je  final
+    sub al,30h
+    cmp num,0
+    je  do_delta
+    push ax
+    mov ax,num
+    mul bx
+    mov num,ax  
+    pop ax
+do_delta:
+    add num,ax
+    mov ax,0
+    inc si
+    jmp lop
+final:    
     ret
+atoi endp
 
 code ends     
 end start
