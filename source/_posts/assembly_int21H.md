@@ -124,7 +124,7 @@ code ends
 end start
 ```
 
-#### 读取键盘输入
+#### 读取键盘输入两个数求和
 这个例子复杂了点
 ```
 assume cs:code, ds:data, ss:stack
@@ -149,14 +149,17 @@ start:
     call atoi
     push num
 
-    mov dl, 0Ah
-    mov ah, 02h
-    int 21h
-
     ; again
     call printMsg
     call readInput
     call atoi
+    push num
+
+    ; cal summ
+    pop ax
+    pop bx
+    add ax, bx
+    call printAx
 
     mov ah, 4ch
     int 21h
@@ -171,6 +174,10 @@ readInput:
     ; first byte to tell dos maximum characters buffer can hold
     mov dx, 0h
     mov ah, 0Ah
+    int 21h
+    ; print \n
+    mov dl, 0Ah
+    mov ah, 02h
     int 21h
     ret
 
@@ -201,9 +208,57 @@ final:
     ret
 atoi endp
 
-code ends     
+
+printAx proc
+    ;initialize count
+    mov cx,0
+    mov dx,0
+    label1:
+        ; if ax is zero
+        cmp ax,0
+        je print1     
+        mov bx,10
+        div bx                 
+         
+        ;push it in the stack
+        push dx             
+         
+        ;increment the count
+        inc cx             
+         
+        ;set dx to 0
+        xor dx,dx
+        jmp label1
+    print1:
+        ;check if count
+        ;is greater than zero
+        cmp cx,0
+        je exit
+         
+        ;pop the top of stack
+        pop dx
+         
+        ;add 48 so that it
+        ;represents the ASCII
+        ;value of digits
+        add dx,48
+        ; print character
+        mov ah,02h
+        int 21h
+         
+        ;decrease the count
+        dec cx
+        jmp print1
+exit:
+        ret
+printAx endp
+
+code ends
 end start
 ```
+
+
+![upload successful](/images/dos_cal_result.png)
 
 
 ## 调试工具DEBUG常用命令
