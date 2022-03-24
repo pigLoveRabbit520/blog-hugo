@@ -156,9 +156,7 @@ start:
     push num
 
     ; cal summ
-    pop ax
-    pop bx
-    add ax, bx
+    call sum
     call printAx
 
     mov ah, 4ch
@@ -182,11 +180,11 @@ readInput:
     ret
 
 atoi proc
-	mov dx,0
-	mov bx,10
-	mov si,2
-	mov num,0
-	mov ax,0
+    mov dx,0
+    mov bx,10
+    mov si,2
+    mov num,0
+    mov ax,0
 lop:
     mov al,buf[si]
     cmp al,0Dh
@@ -207,6 +205,13 @@ do_delta:
 final:    
     ret
 atoi endp
+; 内平衡
+sum:
+    mov bp, sp
+    mov ax, ss:[bp+2]
+    add ax, ss:[bp+4]  
+    
+    ret 4
 
 
 printAx proc
@@ -218,7 +223,7 @@ printAx proc
         cmp ax,0
         je print1     
         mov bx,10
-        div bx                 
+        div bx
          
         ;push it in the stack
         push dx             
