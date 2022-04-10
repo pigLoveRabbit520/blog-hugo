@@ -1,10 +1,10 @@
-title: Win32汇编
+title: x86汇编
 author: pigLoveRabbit
 date: 2022-04-08 21:09:38
 tags:
 ---
-## Win32汇编
-8086的指令在32位的x86 CPU上都是能用的，所以汇编代码是类似的，Win32 **保护模式**下段寄存器就不重要了，平常用的多的就是那8个通用寄存器（为啥用不到CS, DS, ES等寄存器了，请看[这里](https://en.wikipedia.org/wiki/X86_memory_segmentation)）：   
+## x86汇编
+8086的指令在32/64位的x86 CPU上都是能用的，所以汇编代码是类似的，80836之后的CPU **保护模式**下段寄存器就不重要了，平常用的多的就是那8个通用寄存器（为啥用不到CS, DS, ES等寄存器了，请看[这里](https://en.wikipedia.org/wiki/X86_memory_segmentation)）：   
 
 | 通用寄存器  | 含义 | 低8位 | 功能 |
 | --- | --- | --- | --- |
@@ -18,6 +18,7 @@ tags:
 | EBP     | 基址指针(Base Point)寄存器                                                                                      | BP                            | 只做堆栈指针, 可以访问堆栈内任意地址, 经常用于中转 ESP 中的数据, 也常以它为基址来访问堆栈; 不能用于算术运算与数据传送 |
 
 
+64位CPU兼容32位的程序，所有下面的程序都是32位的，汇编器用的是[NASM](https://www.nasm.us/)。
 
 
 <!-- more -->
@@ -33,7 +34,7 @@ MB_DEFBUTTON2 EQU 100h
 IDNO          EQU 7
 MB_YESNO      EQU 4
 
-extern _MessageBoxA@16                          ; Import external symbols
+extern _MessageBoxA@16                          ; Import external symbols，在“@”之后的数字表示了该函数所有参数的尺寸（字节为单位）
 extern _ExitProcess@4                           ; Windows API functions, decorated
 
 global Start                                    ; Export symbols. The entry point
