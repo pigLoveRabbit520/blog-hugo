@@ -96,7 +96,7 @@ ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
 
 
 ## MBR
-MBR：Master Boot Record，主分区引导记录，它是整个硬盘最开始的扇区，即0盘0道1扇区（CHS表示方法，如果是LBA的话，那就是0扇区）。  
+MBR：Master Boot Record，主分区引导记录，它是整个硬盘最开始的扇区，即0柱面0磁头1扇区（CHS表示方法，如果是LBA的话，那就是0扇区）。  
 
 扇区是什么？那就涉及到硬盘基本知识了，对于机械硬盘，有以下概念：
 * 盘片（platter）
@@ -148,11 +148,9 @@ MBR结构：占用硬盘最开头的512字节
 
 
 
-
-
 ## 主引导代码
-BIOS在完成一些简单的检测工作或初始化工作后，会把处理器使用权交出去，下一棒就是MBR程序。BIOS会把MBR加载到0x7c00的位置，然后执行里头代码（`jmp 0:0x7c00`）。
-
+BIOS在完成一些简单的检测工作或初始化工作后，会把处理器使用权交出去，下一棒就是MBR程序。BIOS会把MBR加载到0x7c00的位置，然后执行里头代码（`jmp 0:0x7c00`）。  
+**mbr.S**文件：
 ```
 ;主引导程序 
 ;------------------------------------------------------------
@@ -213,9 +211,13 @@ SECTION MBR vstart=0x7c00
    message db "love rabbit"
    times 510-($-$$) db 0
    db 0x55,0xaa
-
 ```
+用nasm编译成纯二进制文件`nasm -o mbr.bin mbr.S`，可以查看**mbr.bin**文件大小，正好512个字节。  
 
+然后利用`dd`命令把bin文件写进磁盘的0柱面0磁头1扇区：
+```
+dd if=/your_path/bochs_fun/mbr.bin of=/your_path/bochs_fun/hd60M.img bs=512 count=1 conv=notrunc
+```
 
 
 
