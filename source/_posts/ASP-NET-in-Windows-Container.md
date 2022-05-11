@@ -7,7 +7,21 @@ categories:
   - Docker
 date: 2022-05-11 10:19:00
 ---
-平常我们用的都是`Linux Container`，这些容器用的都是Linux的内核，而今天我们要记录的是`Windows Container`，就是讲这些容器用的是Windows的内核，Windows内核是啥？那就是[Windows NT](https://zh.m.wikipedia.org/zh-hans/Windows_NT)。
+平常我们用的都是`Linux Container`，这些容器用的都是Linux的内核，而今天我们要记录的是`Windows Container`，就是讲这些容器用的是Windows的内核，Windows内核是啥？那就是[Windows NT](https://zh.m.wikipedia.org/zh-hans/Windows_NT)。  
+查看你的Windows内核版本，可以用
+```PowerShell
+Get-ComputerInfo | Select WindowsProductName, WindowsVersion, WindowsInstallationType, OsServerLevel, OsVersion, OsHardwareAbstractionLayer
+```
+类似输出
+```
+WindowsProductName         : Windows 10 Pro for Workstations
+WindowsVersion             : 2009
+WindowsInstallationType    : Client
+OsServerLevel              :
+OsVersion                  : 10.0.19044
+OsHardwareAbstractionLayer : 10.0.19041.1566
+```
+上面NT的版本是10.0.19044。
 
 环境  
 * 安装 [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
