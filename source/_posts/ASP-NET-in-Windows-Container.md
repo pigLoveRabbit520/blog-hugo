@@ -61,3 +61,14 @@ Restart-Computer -Force
 ```
 
 ## 设置为Windows Container
+默认Docker是Linux Container的，所以要切换为`Windows Container`。
+
+
+
+
+
+参考：
+* [入门：准备适用于容器的 Windows](https://docs.microsoft.com/zh-cn/virtualization/windowscontainers/quick-start/set-up-environment?tabs=Windows-Server)
+
+
+
