@@ -169,8 +169,55 @@ WORKDIR /app
 COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "myweb.dll"]
 ```
+当然，为了docker build能快点，我们应该添加一个`.dockerignore`文件
+```
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+[Bb]in/
+[Oo]bj/
+# build folder is nowadays used for build scripts and should not be ignored
+#build/
 
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/packages/repositories.config
 
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+```
+好了，现在执行`docker build -t fuck_image .`，构建镜像成功后，可以看到
+```
+PS C:\Users\Administrator> docker images
+REPOSITORY                             TAG              IMAGE ID       CREATED        SIZE
+fuck_image                             latest           a8b482b53388   5 hours ago   392MB
+```
+我们跑个容器`docker run -d --name fuck_asp  fuck_image`，查看容器日志`docker logs fuck_asp`，发现它的http端口是80
+```
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://[::]:80
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\app\
+```
+进入容器执行curl
+```
+docker exec -it fuck_asp cmd.exe
+C:\app>curl http://localhost
+Hello World!
+```
+OK了。  
+注：你的Windows Server如果是跑在虚拟机中的，获取虚拟机的ip有个命令：`VBoxManage guestproperty get "Win Server2022" "/VirtualBox/GuestInfo/Net/0/V4/IP"`
 
 
 参考：
