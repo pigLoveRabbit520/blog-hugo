@@ -7,6 +7,10 @@ categories:
   - wxWidgets
 date: 2022-08-15 09:30:00
 ---
+![](https://www.wxwidgets.org/assets/img/header-logo.png)
+
+<!-- more -->
+
 ## 源码编译安装
 前往wxWidgets[官网](https://www.wxwidgets.org/downloads/)，下载wxWidgets
 
