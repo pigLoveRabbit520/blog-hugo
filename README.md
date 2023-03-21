@@ -1,3 +1,7 @@
+# 环境
+* Nodejs
+* [Pandoc 软件包](https://pandoc.org/installing.html)
+
 # 使用
 ```
 hexo server -d
