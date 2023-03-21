@@ -513,7 +513,7 @@ math:
   mathjax:
     enable: true
     # Available values: none | ams | all
-    tags: ams
+    tags: none
 
   katex:
     enable: false
