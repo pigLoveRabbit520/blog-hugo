@@ -13,26 +13,32 @@ date: 2023-03-21 11:00:00
 绕x轴旋转矩阵：  
 
 
+$$
 \begin{bmatrix} 
 \color{red}1 & \color{red}0 & \color{red}0 & \\ 
 \color{green}0 & \color{green}{\cos \theta} & - \color{green}{\sin \theta} \\  
-\color{blue}0 & \color{blue}{\sin \theta} & \color{blue}{\cos \theta} \\  \end{bmatrix} 
+\color{blue}0 & \color{blue}{\sin \theta} & \color{blue}{\cos \theta} \\  \end{bmatrix}
+$$
 
 
 沿y轴旋转矩阵：  
+$$
 \begin{bmatrix} 
 \color{red}{\cos \theta} & \color{red}0 & \color{red}{\sin \theta} \\ 
 \color{green}0 & \color{green}1 & \color{green}0  \\ 
-- \color{blue}{\sin \theta} & \color{blue}0 & \color{blue}{\cos \theta}
+-\color{blue}{\sin \theta} & \color{blue}0 & \color{blue}{\cos \theta}
 \end{bmatrix}
+$$
 
 
 沿z轴旋转矩阵：  
+$$
 \begin{bmatrix} 
 \color{red}{\cos \theta} & - \color{red}{\sin \theta} & \color{red}0  \\ 
 \color{green}{\sin \theta} & \color{green}{\cos \theta} & \color{green}0  \\ 
 \color{blue}0 & \color{blue}0 & \color{blue}1  \\ 
 \end{bmatrix}
+$$
 
 
 
