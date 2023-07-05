@@ -13,7 +13,7 @@ date: 2021-03-05 09:00:00
 
 
 ## 访问网站后截图
-```
+```CSharp
 const puppeteer = require('puppeteer');
 const url = 'https://segmentfault.com';
 

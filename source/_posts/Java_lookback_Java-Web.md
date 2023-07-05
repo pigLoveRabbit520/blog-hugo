@@ -7,7 +7,7 @@ categories:
   - Java
 date: 2020-04-09 21:00:00
 ---
-<img src="/images/java-web-develop.jpg" width="800px" >
+![upload successful](/images/java-web-develop.jpg)
 
 本文环境：
 * OS：Ubuntu 18.04.4 LTS
