@@ -19,6 +19,7 @@ void main() {
     gl_Position = projectedPosition;
 }
 ```
+
 ##### 片段着色器
 fragment.glsl
 ```
@@ -28,6 +29,7 @@ void main() {
     gl_FragColor = vec4(vPosition, 1);
 }
 ```
+
 #### 效果
 用了PlaneGeometry
 ```
@@ -39,4 +41,4 @@ const material = new THREE.ShaderMaterial({
 })
 ```
 
-![upload successful](\\images\shader-1.png)
+![upload successful](/images/shader-1.png)
