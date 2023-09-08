@@ -28,3 +28,7 @@ New-NetNat -Name MyNATnetwork -InternalIPInterfaceAddressPrefix 192.168.0.0/24
 ```
 Add-NetNatStaticMapping  -NatName MyNATnetwork  -Protocol TCP  -ExternalIPAddress 0.0.0.0/24  -ExternalPort 5400  -InternalIPAddress 192.168.0.3 -InternalPort 5400
 ```
+
+
+参考：
+* https://learn.microsoft.com/zh-cn/virtualization/hyper-v-on-windows/user-guide/setup-nat-network
