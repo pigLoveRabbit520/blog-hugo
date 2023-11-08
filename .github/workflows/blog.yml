@@ -40,7 +40,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt install hugo
+          wget https://github.com/gohugoio/hugo/releases/download/v0.120.3/hugo_0.120.3_linux-amd64.deb
+          sudo dpkg -i hugo*.deb
+          hugo version
 
       - name: Hugo publish
         run: |
