@@ -21,6 +21,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
 
       - name: Use Golang ${{ matrix.go-version }}
         uses: actions/setup-go@v4
