@@ -46,7 +46,7 @@ jobs:
 
       - name: Hugo publish
         run: |
-          git submodule add https://github.com/dillonzq/LoveIt.git themes/LoveIt
+          git clone https://github.com/dillonzq/LoveIt.git themes/LoveIt
           hugo
 
       - name: Upload to qiniu

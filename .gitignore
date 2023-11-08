@@ -8,5 +8,5 @@ public/
 .idea
 .obsidian
 themes/*
-!themes/.gitkeep
+!.gitkeep
 /yarn.lock
