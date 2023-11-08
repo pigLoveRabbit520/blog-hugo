@@ -20,9 +20,7 @@ jobs:
         go-version: [1.21.x]
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: 'true'
+      - uses: actions/checkout@v3
 
       - name: Use Golang ${{ matrix.go-version }}
         uses: actions/setup-go@v4
@@ -48,6 +46,7 @@ jobs:
 
       - name: Hugo publish
         run: |
+          git submodule add https://github.com/dillonzq/LoveIt.git themes/LoveIt
           hugo
 
       - name: Upload to qiniu
