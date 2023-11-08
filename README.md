@@ -6,15 +6,10 @@
 
 ------------旧的方法------------
 ### 环境
-* Nodejs
-* [Pandoc 软件包](https://pandoc.org/installing.html)
+* Hugo
 
 ### 使用
 ```
-hexo server -d
+hugo server
 ```
-进入后台 **http://localhost:4000/admin** ，管理页面
 
-
-# Github Action
-参考文章：[如何正确的使用 GitHub Actions 实现 Hexo 博客的 CICD](https://hdj.me/github-actions-hexo-cicd/)
