@@ -17,15 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        go-version: [1.21.x]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Use Golang ${{ matrix.go-version }}
+        uses: actions/setup-go@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ matrix.go-version }}
 
       - name: Configuration environment
         env:
@@ -35,23 +35,21 @@ jobs:
           echo "$HEXO_DEPLOY_PRI" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          git config --global user.name "salamander"
+          git config --global user.name "pigLoveRabit"
           git config --global user.email "1906747819@qq.com"
 
       - name: Install dependencies
         run: |
-          npm i -g hexo-cli
-          npm i
-          sudo apt-get install pandoc
+          sudo apt install hugo
 
-      - name: Deploy hexo
+      - name: Hugo publish
         run: |
-          hexo g -d
+          hugo
 
       - name: Upload to qiniu
         working-directory: .
         run: |
-          hexo generate && work_path=$(pwd)
+          work_path=$(pwd)
           sudo curl -L http://file.51lucy.com/qshell -o /usr/local/bin/qshell
           sudo chmod +x /usr/local/bin/qshell
           qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} meng

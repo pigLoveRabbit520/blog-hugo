@@ -1,9 +1,12 @@
 .DS_Store
 Thumbs.db
 *.log
+resources/_gen
 node_modules/
 public/
 .deploy*/
 .idea
 .obsidian
+themes/*
+!themes/.gitkeep
 /yarn.lock
