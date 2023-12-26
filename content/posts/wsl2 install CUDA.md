@@ -1,3 +1,4 @@
+---
 title: wsl2 install CUDA
 author: pigLoveRabbit
 tags:
