@@ -13,3 +13,5 @@
 hugo server
 ```
 
+## LaTeX问题
+在Hugo中goldmark will convert `\\` to `\` ，导致换行符号不可用，所以我用`\newline`代替了。
