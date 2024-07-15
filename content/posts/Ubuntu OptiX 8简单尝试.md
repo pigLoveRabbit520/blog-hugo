@@ -10,6 +10,8 @@ categories:
 date: 2024-07-05 16:00:00
 ---
 
+CUDA 的安装参考之前的[文章](/wsl2-install-cuda/)  
+需要安装 [OptiX 8](https://developer.nvidia.com/designworks/optix/download)  
 这是[Reference.pdf](https://raytracing-docs.nvidia.com/optix8/api/OptiX_API_Reference.pdf)
 
 新建一个 CMake 项目，目录结构是这样的
@@ -25,7 +27,7 @@ optix_example/
 
 `CMakeLists.txt`文件：
 
-```cmake
+```
 cmake_minimum_required(VERSION 3.10)
 
 project(OptiXExample)
@@ -56,7 +58,7 @@ target_link_libraries(OptiXExample CUDA::cudart)
 
 `FindOptix80.cmake`文件：
 
-```cmake
+```
 # Looks for the environment variable:
 
 # OPTIX80_PATH
@@ -95,7 +97,7 @@ mark_as_advanced(OPTIX80_INCLUDE_DIR)
 
 main.cpp 文件：
 
-```cpp
+```C++
 #include <optix.h>
 #include <optix_stubs.h>
 #include <optix_function_table_definition.h>
@@ -139,7 +141,35 @@ int main()
     // Initialize CUDA
     cudaFree(0);
 
-    initOptix();
+    try
+    {
+        std::cout << "#osc: initializing optix..." << std::endl;
+        initOptix();
+
+        std::cout
+            << "#osc: successfully initialized optix... yay!"
+            << std::endl;
+
+        // for this simple hello-world example, don't do anything else
+        // ...
+        std::cout << "#osc: done. clean exit." << std::endl;
+    }
+    catch (std::runtime_error &e)
+    {
+        std::cout << "FATAL ERROR: " << e.what()
+                  << std::endl;
+        exit(1);
+    }
     return 0;
 }
+```
+
+最后编译，运行输出
+
+```bash
+$ ./OptiXExample
+#osc: initializing optix...
+#osc: found 1 CUDA devices
+#osc: successfully initialized optix... yay!
+#osc: done. clean exit.
 ```
