@@ -5,9 +5,9 @@ name: HEXO CI
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -49,15 +49,3 @@ jobs:
         run: |
           git clone https://github.com/dillonzq/LoveIt.git themes/LoveIt
           hugo
-
-      - name: Upload to qiniu
-        working-directory: .
-        run: |
-          work_path=$(pwd)
-          sudo curl -L http://file.51lucy.com/qshell -o /usr/local/bin/qshell
-          sudo chmod +x /usr/local/bin/qshell
-          qshell account ${{secrets.QINIU_AK}} ${{secrets.QINIU_SK}} meng
-          qshell listbucket blog-cn -o ~/blog-cn.list.txt
-          qshell batchdelete --force blog-cn -i ~/blog-cn.list.txt
-          echo -e "{ \"src_dir\": \"${work_path}/public\", \n \"bucket\": \"blog-cn\" }" > ~/upload.conf
-          pwd && qshell -c 5 qupload ~/upload.conf
