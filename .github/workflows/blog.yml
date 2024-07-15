@@ -34,12 +34,13 @@ jobs:
 
       - name: Hugo prepare
         run: |
+          git config --global --add safe.directory '*'
           git clone https://github.com/dillonzq/LoveIt.git themes/LoveIt
 
       - name: Deploy the site
         uses: benmatselby/hugo-deploy-gh-pages@v2.2.0
         env:
-          HUGO_VERSION: 0.128.0
+          HUGO_VERSION: 0.128.1
           TARGET_REPO: pigLoveRabbit520/pigLoveRabbit520.github.io
           TARGET_BRANCH: main
           TOKEN: ${{ secrets.HEXO_DEPLOY_KEY }}
