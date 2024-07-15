@@ -7,6 +7,5 @@ public/
 .deploy*/
 .idea
 .obsidian
-themes/*
 !.gitkeep
 /yarn.lock
