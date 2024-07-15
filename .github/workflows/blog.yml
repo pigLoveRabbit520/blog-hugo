@@ -21,31 +21,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      # - name: Configuration environment
+      #   env:
+      #     HEXO_DEPLOY_PRI: ${{secrets.HEXO_DEPLOY_KEY}}
+      #   run: |
+      #     mkdir -p ~/.ssh/
+      #     echo "$HEXO_DEPLOY_PRI" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
+      #     git config --global user.name "pigLoveRabit"
+      #     git config --global user.email "1906747819@qq.com"
 
-      - name: Use Golang ${{ matrix.go-version }}
-        uses: actions/setup-go@v4
-        with:
-          node-version: ${{ matrix.go-version }}
-
-      - name: Configuration environment
-        env:
-          HEXO_DEPLOY_PRI: ${{secrets.HEXO_DEPLOY_KEY}}
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$HEXO_DEPLOY_PRI" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          git config --global user.name "pigLoveRabit"
-          git config --global user.email "1906747819@qq.com"
-
-      - name: Install dependencies
-        run: |
-          wget https://github.com/gohugoio/hugo/releases/download/v0.120.3/hugo_0.120.3_linux-amd64.deb
-          sudo dpkg -i hugo*.deb
-          go install --tags extended github.com/gohugoio/hugo@latest
-          hugo version
-
-      - name: Hugo publish
+      - name: Hugo prepare
         run: |
           git clone https://github.com/dillonzq/LoveIt.git themes/LoveIt
-          hugo
+
+      - name: Deploy the site
+        uses: benmatselby/hugo-deploy-gh-pages@v2.2.0
+        env:
+          HUGO_VERSION: 0.128.0
+          TARGET_REPO: pigLoveRabbit520/pigLoveRabbit520.github.io
+          TARGET_BRANCH: main
+          TOKEN: ${{ secrets.HEXO_DEPLOY_KEY }}
+          HUGO_ARGS: ""
+          CNAME: blog.51lucy.com
