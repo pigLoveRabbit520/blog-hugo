@@ -41,3 +41,4 @@ jobs:
           external_repository: pigLoveRabbit520/pigLoveRabbit520.github.io
           publish_branch: master
           publish_dir: ./public
+          cname: blog.51lucy.com
