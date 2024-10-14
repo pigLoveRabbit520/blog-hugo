@@ -84,6 +84,11 @@ $$
 $$
 (y - X\beta)^T (y - X\beta) = y^T y - y^T X\beta - (X\beta)^T y + (X\beta)^T X\beta
 $$
+然后得到：
+$$
+(y - X\beta)^T (y - X\beta) = y^T y - y^T X\beta - \beta^TX^T y + \beta^T X^T X \beta
+$$
+这里$y^T X\beta $和$ \beta^TX^T y$ 都是$1 \times 1$的标量，对于标量，有$a^T = a$，因此$\beta^TX^T y = (\beta^TX^T y)^T = y^TX\beta $  
 合并同类项：
 $$
 (y - X\beta)^T (y - X\beta) = y^T y - 2\beta^T X^Ty + \beta^T X^T X \beta
