@@ -95,9 +95,22 @@ $$
 $$
 (y - X\beta)^T (y - X\beta) = y^T y - 2\beta^T X^Ty + \beta^T X^T X \beta
 $$
-
-
-
+我们有$Q$函数
+$$
+Q(\beta) = y^T y - 2\beta^T X^Ty + \beta^T X^T X \beta
+$$
+，我们可以通过对其求导来找到$min \beta$，这里涉及到了矩阵微积分
+$$
+\frac{\partial Q(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}}=2 \boldsymbol{X}^{T} \boldsymbol{X} \boldsymbol{\beta}-2 \boldsymbol{X}^{T} \boldsymbol{y}
+$$
+令$\frac{\partial Q(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}}=0$可得：  
+$$
+\boldsymbol{X}^{T} \boldsymbol{X} \boldsymbol{\beta}=\boldsymbol{X}^{T} \boldsymbol{y}
+$$
+假设$\boldsymbol{X}^{T}X$是满秩的，因为$(\boldsymbol{X}^{T}X)^{-1}$存在，解得：
+$$
+\boldsymbol{\beta} = (\boldsymbol{X}^{T}X)^{-1} \boldsymbol{X}^{T}\boldsymbol{y}
+$$
 
 参考：
 * [矩阵范数](https://sunocean.life/blog/blog/2020/08/31/deep-learning-math-norm)
