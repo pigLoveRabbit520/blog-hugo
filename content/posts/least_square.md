@@ -67,13 +67,14 @@ $$
 \min_{\beta} || \boldsymbol{y} - \boldsymbol{X}\boldsymbol{\beta} ||^2
 $$
 这里的$\|\cdot\|$表示Frobenius 范数或F-范数，是一种矩阵范数。  
-矩阵A的Frobenius范数定义为矩阵A各项元素的绝对值平方的总和，即 ：
+矩阵A的Frobenius范数定义为矩阵A各项元素的绝对值平方的总和，即 ：  
 $$
 ||A||_F = \sqrt{\sum_{i,j} |a_{ij}|^2}
 $$
+
 这里$ a_{ij} $是矩阵 中第i行，第j列的元素。下标2可以省略，所以可以直接写成$ ||A|| $。  
 
-因为$ \boldsymbol{y} - \boldsymbol{X}\boldsymbol{\beta} $其实是一个列向量，所以它的F-范数行向量乘以列向量，我们可以得到：
+因为$ \boldsymbol{y} - \boldsymbol{X}\boldsymbol{\beta} $其实是一个列向量，所以它的F-范数的平方就是行向量乘以列向量，我们可以得到：
 $$
 ||A||^2 = A^TA
 $$
