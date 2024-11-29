@@ -7,7 +7,7 @@ categories:
   - 深度学习
 date: 2024-10-25 19:00:00
 ---
-![Keras](https://i-blog.csdnimg.cn/blog_migrate/6236422092578e4462ea541ebf37fc8f.png)
+![Keras](/images/my-keras.png)
 <!-- more -->
 
 ## 一个demo
