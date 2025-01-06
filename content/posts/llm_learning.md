@@ -43,4 +43,5 @@ date: 2024-12-01 20:00:00
 
 
 
-[参考](http://shiyanjun.cn/archives/2688.html)
+* [参考](http://shiyanjun.cn/archives/2688.html)
+* [Transformer图解](https://fancyerii.github.io/2019/03/09/transformer-illustrated/)
