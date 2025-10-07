@@ -7,7 +7,7 @@ categories:
   - 深度学习
 date: 2024-10-29 20:00:00
 ---
-![pytorch](https://venturebeat.com/wp-content/uploads/2019/06/pytorch-e1576624094357.jpg)
+![pytorch](/images/PyTorchLogo.jpg)
 <!-- more -->
 
 ## 一个例子

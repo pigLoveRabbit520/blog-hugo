@@ -2,12 +2,12 @@
 title: Attention机制学习
 author: pigLoveRabbit
 tags:
-  - Blender
+  - llm
 categories:
-  - Blender
+  - llm
 date: 2024-12-01 20:00:00
 ---
-![logo](https://ask.qcloudimg.com/http-save/yehe-1599485/a7ad1d33a72390f3e6f52a85701f0329.png)
+![logo](/images/attention-formula.png)
 
 <!-- more -->
 
