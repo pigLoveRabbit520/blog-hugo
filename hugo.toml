@@ -1,4 +1,4 @@
-baseURL = "https://example.com"
+baseURL = "https://pigLoveRabbit520.github.io"
 
 # theme
 # 主题
@@ -6,7 +6,7 @@ theme = "LoveIt"
 
 # website title
 # 网站标题
-title = "pigLoveRabbit的网站"
+title = "猪爱兔的网站"
 
 # determines default content language ["en", "zh-cn", "fr", "pl", ...]
 # 设置默认的语言 ["en", "zh-cn", "fr", "pl", ...]
