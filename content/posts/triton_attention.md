@@ -19,6 +19,11 @@ date: 2025-10-26 14:00:00
 
 ## 最简单的Attention算子
 
+Attention公式
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left( \frac{Q K^\top}{\sqrt{d_k}} \right) V
+$$
+
 ```python
 import torch
 import torch.nn.functional as F
