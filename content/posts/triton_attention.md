@@ -71,7 +71,7 @@ if __name__ == "__main__":
 ![transformer](https://transformers.run/assets/img/attention/transformer.jpeg)
 左边是Encoder，右边是Decoder  
 
-**答案：在推理阶段，没有“Outputs (shifted right)”这个明确的输入。** 这个概念是训练阶段为了模拟推理行为而设计的一种“技巧”或“教学工具”。
+**在推理阶段，没有“Outputs (shifted right)”这个明确的输入。** 这个概念是训练阶段为了模拟推理行为而设计的一种“技巧”或“教学工具”。
 
 我们来详细解释一下：
 
@@ -129,3 +129,100 @@ if __name__ == "__main__":
 *   **推理：** 像学生自己写作文。他只能从第一个字开始写，写下的每一个字都成为下文的基础。他不可能提前拿到一篇“右移”的作文。
 
 因此，**“Outputs (shifted right)”是训练阶段独有的一个数据准备步骤，在推理阶段不存在。** 推理阶段的输入是自回归地、逐步构建起来的。
+
+在你提到的 Transformer 架构图（例如 [https://transformers.run/assets/img/attention/transformer.jpeg](https://transformers.run/assets/img/attention/transformer.jpeg)）中，**“Add & Norm”** 是 **“Add and Layer Normalization”** 的缩写，它是 Transformer 模型中一个**关键的子层结构**，用于稳定训练、加速收敛并提升模型性能。
+
+---
+
+### Add & Norm 一句话解释：
+> **“Add & Norm” = 残差连接（Add） + 层归一化（Layer Normalization）**
+
+它出现在 **Encoder 和 Decoder 的每个子模块之后**，具体有两个位置：
+1. **自注意力（或 cross-attention）之后**
+2. **前馈神经网络（Feed Forward）之后**
+
+---
+
+### 🔍 详细拆解：
+
+#### 1. **Add（残差连接 / Residual Connection）**
+- 将**子层的输入**和**子层的输出**相加：
+  ```python
+  output = sublayer(input) + input
+  ```
+- 作用：
+  - 缓解深层网络中的梯度消失问题；
+  - 允许信息直接“跳过”某些层，保留原始特征；
+  - 是 ResNet 思想在 Transformer 中的应用。
+
+#### 2. **Norm（Layer Normalization）**
+- 对 **Add 之后的结果**做层归一化：
+  ```python
+  normalized_output = LayerNorm(sublayer(input) + input)
+  ```
+- LayerNorm 是对**单个样本的所有特征维度**做归一化（与 BatchNorm 不同，不依赖 batch）；
+- 作用：
+  - 稳定隐藏层分布；
+  - 加速训练；
+  - 减少对初始化和学习率的敏感性。
+
+---
+
+### 📦 在 Transformer 中的具体位置：
+
+#### Encoder 层结构（重复 N 次）：
+```
+Input
+  │
+  ├─→ [Multi-Head Self-Attention] ──→ Add & Norm ──→
+  │
+  └─→ [Feed Forward Network] ───────→ Add & Norm ──→ Output
+```
+
+#### Decoder 层结构（重复 N 次）：
+```
+Input
+  │
+  ├─→ [Masked Multi-Head Self-Attention] ──→ Add & Norm ──→
+  │
+  ├─→ [Multi-Head Cross-Attention] ─────────→ Add & Norm ──→
+  │
+  └─→ [Feed Forward Network] ───────────────→ Add & Norm ──→ Output
+```
+
+> ⚠️ 注意：原始论文中是 **先做子层计算 → 再 Add → 再 Norm**（Post-LN）。  
+> 但现在很多变体（如 Pre-LN）会把 LayerNorm 放在子层**之前**，训练更稳定。
+
+---
+
+### 🧠 举个简单例子（数值示意）：
+
+假设某层输入是向量 `x = [1.0, 2.0]`，经过自注意力后输出 `y = [0.8, 2.2]`。
+
+1. **Add（残差）**：  
+   `z = x + y = [1.0+0.8, 2.0+2.2] = [1.8, 4.2]`
+
+2. **Norm（LayerNorm）**：  
+   对 `[1.8, 4.2]` 做归一化（减均值、除标准差 + 可学习缩放/偏移），得到标准化后的向量，比如 `[−1, 1]`（简化示意）。
+
+这个结果就作为下一层的输入。
+
+---
+
+### ❓为什么叫 “Add & Norm” 而不是 “Norm & Add”？
+- 因为**顺序是先 Add，再 Norm**（在原始 Transformer 中）；
+- 虽然名字是 “Add & Norm”，但实际是两个操作的组合，不是并行的。
+
+---
+
+### ✅ 总结：
+
+| 组件 | 作用 |
+|------|------|
+| **Add** | 残差连接，保留原始信息，缓解梯度消失 |
+| **Norm** | 层归一化，稳定训练，加速收敛 |
+| **Add & Norm** | Transformer 的标准子层后处理模块，提升模型深度和性能 |
+
+它是 Transformer 能堆叠多层（如 6 层、12 层甚至更多）而依然可训练的关键设计之一！
+
+如果你看到图中每个方框（Attention / FFN）后面都跟着一个 “Add & Norm”，现在你就知道它在做什么啦 😊
