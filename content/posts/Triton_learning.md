@@ -185,6 +185,18 @@ def softmax(x: torch.Tensor):
     )
     
     return output
+
+# 测试
+M, N = 128, 512
+x = torch.randn(M, N, device='cuda')
+
+y_torch = torch.softmax(x, dim=-1)
+y_triton = softmax(x)
+
+# 检查数值误差
+print("Max diff:", (y_torch - y_triton).abs().max().item())
+assert torch.allclose(y_torch, y_triton, atol=1e-5), "Results don't match!"
+print("✅ Triton softmax matches PyTorch!")
 ```
 
 ### 说明
