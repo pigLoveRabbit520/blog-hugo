@@ -130,6 +130,41 @@ if __name__ == "__main__":
 
 因此，**“Outputs (shifted right)”是训练阶段独有的一个数据准备步骤，在推理阶段不存在。** 推理阶段的输入是自回归地、逐步构建起来的。
 
+##是的，**Transformer 中的 FFN（Feed-Forward Network，前馈神经网络）层本质上是由两个全连接层（Fully Connected Layers）组成的**，中间夹着一个非线性激活函数。
+
+### FFN层：
+在原始的 Transformer 论文（《Attention is All You Need》）中，FFN 层的结构如下：
+
+```
+FFN(x) = W₂ * GELU(W₁ * x + b₁) + b₂
+```
+
+或者在早期版本中使用的是 ReLU：
+
+```
+FFN(x) = W₂ * ReLU(W₁ * x + b₁) + b₂
+```
+
+其中：
+- `W₁` 和 `W₂` 是可学习的权重矩阵（即全连接层的参数），
+- `b₁` 和 `b₂` 是偏置项，
+- `GELU` 或 `ReLU` 是非线性激活函数。
+
+### 为什么说它们是“全连接”？
+- **第一层**：将输入向量（维度为 `d_model`）线性变换到一个更高维的隐藏空间（维度通常为 `4 * d_model`），这是一个标准的线性变换 → **全连接层**。
+- **激活函数**：引入非线性（如 ReLU、GELU）。
+- **第二层**：将隐藏层向量再线性变换回原始维度 `d_model` → **另一个全连接层**。
+
+这两个线性变换都没有使用卷积、循环结构或注意力机制，纯粹是矩阵乘法 + 偏置，因此**完全符合“全连接层”的定义**。
+
+#### 补充说明：
+- **每个位置独立处理**：FFN 对序列中每个位置的表示独立应用相同的网络结构（即权重共享），这与自注意力机制不同（自注意力是跨位置交互的）。
+- **参数量大**：由于隐藏层维度通常是 `d_model` 的 4 倍，FFN 是 Transformer 中参数量最大的部分之一（通常超过注意力机制）。
+- **变体存在**：虽然标准 FFN 是两个全连接层，但后续研究也探索了其他结构（如使用卷积、稀疏连接、MoE 等），但在原始 Transformer 和绝大多数实现中，**FFN 就是两个全连接层**。
+
+### 总结：
+✅ **是的，Transformer 中的 FFN 层由两个全连接层构成**，中间加一个非线性激活函数。这是其标准和最广泛使用的结构。
+
 在你提到的 Transformer 架构图（例如 [https://transformers.run/assets/img/attention/transformer.jpeg](https://transformers.run/assets/img/attention/transformer.jpeg)）中，**“Add & Norm”** 是 **“Add and Layer Normalization”** 的缩写，它是 Transformer 模型中一个**关键的子层结构**，用于稳定训练、加速收敛并提升模型性能。
 
 ---
