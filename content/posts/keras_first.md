@@ -9,39 +9,79 @@ date: 2024-10-25 19:00:00
 ---
 ![Keras](/images/my-keras.png)
 <!-- more -->
-
-## 一个demo
-csv在这里[下载](https://github.com/npradaschnor/Pima-Indians-Diabetes-Dataset/blob/master/diabetes.csv)
-```Python
-import os
-# Create first network with Keras
-from keras.models import Sequential
-from keras.layers import Dense
-import numpy
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-# fix random seed for reproducibility
-seed = 7
-numpy.random.seed(seed)
-# load pima indians dataset
-dataset = numpy.loadtxt("pima-indians-diabetes.csv", delimiter=",", skiprows=1)
-# split into input (X) and output (Y) variables
-X = dataset[:,0:8]
-Y = dataset[:,8]
-# create model
-model = Sequential()
-model.add(Dense(12, input_dim=8, kernel_initializer='uniform', activation='relu')) 
-model.add(Dense(8, bias_initializer='uniform', activation='relu'))
-model.add(Dense(1, kernel_initializer='uniform', activation='sigmoid'))
-# Compile model
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']) # Fit the model
-model.fit(X, Y, epochs=150, batch_size=10)
-# evaluate the model
-scores = model.evaluate(X, Y)
-print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+## 安装Keras
+Keras 2 是一个较旧的版本（最新主版本为 Keras 3，但许多用户仍在使用 Keras 2.x，尤其是配合 TensorFlow 1.x 或 2.x 早期版本）。  
+装TensorFlow 2.15的时候，Keras 2自动就带上了。
+```
+pip install tensorflow==2.15.0
 ```
 
-## 
+## 一个demo
+```Python
+import tensorflow as tf
+import keras
+
+print(f"TensorFlow版本: {tf.__version__}")
+print(f"Keras版本: {keras.__version__}")
+
+# 创建一个简单的模型
+model = keras.Sequential([
+    keras.layers.Dense(128, activation='relu', input_shape=(784,)),
+    keras.layers.Dense(10, activation='softmax')
+])
+
+print("模型创建成功！")
+```
 [视频课程](https://www.bilibili.com/video/BV1Bp4y1D7YL/?p=8)  
+
+## 实现线性回归
+```python
+import keras
+import numpy as np
+import matplotlib
+matplotlib.use('Qt5Agg')
+import matplotlib.pyplot as plt
+# Sequential按顺序构成的模型
+from keras.models import Sequential
+# Dense全连接层
+from keras.layers import Dense
+
+# 使用numpy生成100个随机点
+x_data = np.random.rand(100)
+noise = np.random.normal(0, 0.01, x_data.shape)
+y_data = x_data*0.1 + 0.2 + noise
+
+
+# 构建一个顺序模型
+model= Sequential()
+# 在模型中添加一个全连接层
+model.add(Dense(units=1, input_dim=1))
+# sgd：Stochasticgradientdescent，随机梯度下降法
+# mse：Mean Squared Error，均方误差
+model.compile(optimizer='sgd', loss='mse')
+
+# 训练3001个批次
+for step in range(3001):
+    # 每次训练一个批次
+    cost = model.train_on_batch(x_data, y_data)
+    # 每500个batch打印一次cost值
+    if step % 500 == 0:
+        print('cost:', cost)
+# 打印权值和偏置值
+W, b = model. layers[0].get_weights()
+print('w:', W, 'b:', b)
+# x_data输入网络中，得到预测值y_pred
+y_pred = model.predict(x_data)
+
+# 显示随机点
+plt.scatter(x_data, y_data)
+# 显示预测结果
+plt.plot(x_data, y_pred, 'r-', lw=3) # y_pred的shape是(100, 1)，但plot() 函数可以自动处理这种形状差异
+plt.show()
+```
+
+
+## 数字识别
 6w张图片的数据集
 ```
 import os
