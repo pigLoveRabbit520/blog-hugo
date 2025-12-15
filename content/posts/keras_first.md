@@ -98,8 +98,6 @@ x_data = np.linspace(-0.5, 0.5, 200)
 noise = np.random.normal(0, 0.02, x_data.shape)
 y_data = np.square(x_data) + noise
 
-#构硬一个顺序模型
-model=Sequential()
 #在模型中添加一个全连接层
 # 构建模型 - 修正版本
 model = Sequential()
