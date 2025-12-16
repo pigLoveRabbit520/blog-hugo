@@ -300,6 +300,7 @@ softmax(y)  # 内核使用 y.stride(0) == 1，正确！
 
 
 ## mean算子
+这个例子有点复杂
 ```
 import torch
 import triton
@@ -510,3 +511,67 @@ if __name__ == "__main__":
     test_mean_batch_invariant()
 
 ```
+
+在 PyTorch 中，`torch.reshape()` 的行为类似于 NumPy 的 `reshape`：**它尽可能返回一个 view（视图）**，但在某些情况下**无法返回 view 时，会返回一个 copy（副本）**。
+
+### 什么时候会返回 copy？
+
+当张量的内存布局（由 `stride` 决定）不允许在不复制数据的情况下形成目标形状时，`reshape` 就必须返回一个 copy。
+
+具体来说，如果原张量不是**连续的（contiguous）**，并且目标形状无法通过调整 stride 来表示，那么 `reshape` 就会触发数据复制。
+
+---
+
+### 举个例子
+
+```python
+import torch
+
+# 创建一个非连续的张量
+x = torch.arange(12).reshape(3, 4)   # shape: (3, 4)
+y = x.t()                            # 转置 -> shape: (4, 3)，但内存不连续
+
+print("y.is_contiguous():", y.is_contiguous())  # False
+
+# 尝试 reshape
+z = y.reshape(12)
+
+print("z.is_contiguous():", z.is_contiguous())  # True
+
+# 检查是否是 view：修改 z 是否会影响 y？
+# 注意：如果 z 是 y 的 view，那么修改 z 会影响 y（或底层数据）
+# 但 reshape 返回的 z 是 copy，所以不会影响 y
+
+z[0] = -999
+print("y[0, 0]:", y[0, 0])  # 仍然是 0，说明 z 是 copy
+```
+
+输出类似：
+```
+y.is_contiguous(): False
+z.is_contiguous(): True
+y[0, 0]: 0
+```
+
+这说明：因为 `y` 是非连续的（由 `.t()` 产生），`y.reshape(12)` 无法只通过修改 stride 来展平，所以 PyTorch **必须复制数据**，返回一个新张量（copy）。
+
+---
+
+### 对比：连续张量的 reshape（返回 view）
+
+```python
+a = torch.arange(12)          # contiguous
+b = a.reshape(3, 4)           # view
+b[0, 0] = 888
+print(a[0])  # 输出 888，说明是 view
+```
+
+---
+
+### 总结
+
+- `torch.reshape()` **优先返回 view**；
+- **当输入张量不连续且目标形状无法通过 stride 表达时，会返回 copy**；
+- 判断是否是 view 的一个实用方式：检查 `.is_contiguous()` 或通过修改元素看是否影响原张量（但后者不推荐用于生产代码）；
+- 如果你**明确需要 view**，可使用 `.view()`：它在无法创建 view 时会报错；
+- 如果你**明确需要新内存**，可以用 `.reshape().clone()` 或先 `.contiguous()` 再 `.view()`。
