@@ -204,3 +204,96 @@ print("✅ Triton softmax matches PyTorch!")
 * 并行性：每行由一个 Triton 程序（program）处理，利用 BLOCK_SIZE 个线程并行加载/计算该行。
 * 内存访问：使用 mask 避免越界读写，适用于 N 不是 BLOCK_SIZE 整数倍的情况。
 * BLOCK_SIZE：自动选择最接近 N 的 2 的幂，但不超过 4096（Triton 的限制）。
+
+## 为啥需要input_row_stride这样的参数
+`input_row_stride`（以及 `output_row_stride`）参数的存在，是为了让 Triton 内核能够**正确处理非连续内存布局（non-contiguous tensors）**，尤其是**跨步（strided）张量**。
+
+---
+
+### 1. 什么是 stride（步长）？
+
+在 PyTorch（以及大多数张量库）中，一个张量在内存中是**一维线性存储**的，但通过 `shape` 和 `stride` 来解释其多维结构。
+
+例如：
+```python
+x = torch.randn(4, 8)  # shape=(4,8)
+print(x.stride())      # 通常是 (8, 1)
+```
+- `stride[0] = 8`：表示第 0 维（行）每增加 1，内存地址跳过 8 个元素。
+- `stride[1] = 1`：表示第 1 维（列）每增加 1，内存地址跳过 1 个元素。
+
+所以，`x[i, j]` 对应的内存偏移是：`i * stride[0] + j * stride[1]`。
+
+---
+
+### 2. 为什么不能假设 stride 是固定的？
+
+因为 PyTorch 张量**不一定是连续的**！例如：
+
+#### 情况一：转置（transpose）
+```python
+x = torch.randn(4, 8)
+y = x.t()  # shape=(8,4), stride=(1, 8) ← 注意！
+```
+- 现在 `y` 的第 0 维（原列）的 stride 是 1，第 1 维（原行）的 stride 是 8。
+- 如果你的内核假设“每行连续存储（stride=列数）”，那么对 `y` 调用 softmax 就会出错！
+
+#### 情况二：切片（slice）
+```python
+x = torch.randn(10, 20)
+z = x[::2, :]  # 取偶数行，shape=(5,20)，但 stride[0] = 40（不是20！）
+```
+
+#### 情况三：view / reshape 后的非连续张量
+某些 reshape 操作可能产生非连续内存布局。
+
+---
+
+### 3. 如果不传 stride 会发生什么？
+
+假设你写死：
+```python
+row_start_ptr = input_ptr + row_idx * n_cols  # ❌ 错误！
+```
+
+这**只在张量是行连续（row-major, contiguous）时才正确**。一旦遇到转置或切片张量，就会：
+- 读取错误的内存位置
+- 导致结果完全错误
+- 甚至越界访问（segmentation fault）
+
+---
+
+### 4. 正确做法：使用实际 stride
+
+通过传入 `x.stride(0)`（即第 0 维的 stride），Triton 内核可以正确计算每一行的起始地址：
+
+```python
+row_start_ptr = input_ptr + row_idx * input_row_stride
+```
+
+这样无论张量是否连续、是否转置、是否切片，都能正确访问数据。
+
+---
+
+### 5. 实际例子对比
+
+```python
+x = torch.randn(2, 4, device='cuda')
+y = x.t()  # shape=(4,2), stride=(1, 4)
+
+# 正确调用（传 stride）：
+softmax(y)  # 内核使用 y.stride(0) == 1，正确！
+
+# 错误实现（假设 stride = n_cols = 2）：
+# 会认为第0行在 0*2=0，第1行在 1*2=2，...
+# 但实际上第1行在内存偏移 1*1 = 1！
+```
+
+---
+
+### 6. 补充：为什么 output 也需要 stride？
+
+因为输出张量 `output = torch.empty_like(x)` 会**继承输入的内存布局**（包括 stride）。所以你也必须用 `output.stride(0)` 来正确写入结果。
+
+---
+但其实我这个Softmax算子，更通用一点，也应该加入列的stride。
