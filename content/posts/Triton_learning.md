@@ -575,3 +575,60 @@ print(a[0])  # 输出 888，说明是 view
 - 判断是否是 view 的一个实用方式：检查 `.is_contiguous()` 或通过修改元素看是否影响原张量（但后者不推荐用于生产代码）；
 - 如果你**明确需要 view**，可使用 `.view()`：它在无法创建 view 时会报错；
 - 如果你**明确需要新内存**，可以用 `.reshape().clone()` 或先 `.contiguous()` 再 `.view()`。
+
+## 自动调优autotune
+```Python
+import torch
+import triton
+import triton.language as tl
+import time
+
+# 定义 autotune 的配置
+@triton.autotune(
+    configs=[
+        triton.Config({'BLOCK_SIZE': 128}),
+        triton.Config({'BLOCK_SIZE': 256}),
+        triton.Config({'BLOCK_SIZE': 512}),
+        triton.Config({'BLOCK_SIZE': 1024}),
+    ],
+    key=['n'],
+)
+@triton.jit
+def add_kernel(
+    x_ptr,
+    y_ptr,
+    output_ptr,
+    n,
+    BLOCK_SIZE: tl.constexpr,
+):
+    pid = tl.program_id(axis=0)
+    offsets = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
+    mask = offsets < n
+
+    x = tl.load(x_ptr + offsets, mask=mask)
+    y = tl.load(y_ptr + offsets, mask=mask)
+    output = x + y
+    tl.store(output_ptr + offsets, output, mask=mask)
+
+def add(x: torch.Tensor, y: torch.Tensor):
+    output = torch.empty_like(x)
+
+    n = x.numel()
+    grid = lambda meta: (triton.cdiv(n, meta['BLOCK_SIZE']),)
+    add_kernel[grid](x, y, output, n)
+    return output
+
+# 测试
+if __name__ == "__main__":
+    torch.manual_seed(0)
+    for i in range(5):
+        size = 98431  # 非2的幂，更能体现 autotune 的作用
+        x = torch.rand(size, dtype=torch.float32, device='npu:0')
+        y = torch.rand(size, dtype=torch.float32, device='npu:0')
+        start = time.time()
+        output = add(x, y)
+        torch.npu.synchronize()
+        end = time.time()
+        print(output[:5])  # 打印前5个元素验证正确性
+        print(f"Kernel time: {(end - start) * 1000:.4f} ms")
+```
