@@ -95,20 +95,6 @@ for data, target in dataloader:
 
 ---
 
-### 📌 和你背景的关联
-
-你提到：
-- 关注 **算子开发**（Triton/Tilelang）
-- 关心 **NPU 多核性能**
-- 熟悉 **深度学习框架中的梯度计算**
-
-那么 `backward()` 对你来说意味着：
-- 它触发了**反向算子**（如 `MulBackward`, `AddBackward`）的执行；
-- 这些反向算子的**性能**直接影响训练速度；
-- 如果你在 NPU 上自定义算子，**必须同时实现前向和反向**（或用自动微分工具生成），否则 `backward()` 会出错或低效。
-
----
-
 ### 总结
 
 | 概念 | 说明 |
@@ -117,3 +103,12 @@ for data, target in dataloader:
 | 结果存储在哪？ | `param.grad`（和 `param` 同 shape） |
 | 为什么重要？ | 没有它，就无法用梯度下降更新模型参数 |
 | 底层原理？ | 动态计算图 + 链式法则 + 反向传播 |
+
+## @ 运算符
+实际上，`@` 运算符在 PyTorch 中就是 torch.matmul 的语法糖。
+```
+w = torch.randn(12, 1)   # 列向量 (12, 1)
+x = torch.randn(12, 1)   # 列向量 (12, 1)
+result = w.t() @ x     # (1, 1) 标量，
+print(result)
+```
