@@ -1,4 +1,4 @@
-baseURL = "https://pigLoveRabbit520.github.io"
+baseURL = "https://rabbitLove520.github.io"
 
 # theme
 # 主题
@@ -50,7 +50,7 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
 [author]
   name = "pigLoveRabbit"
   email = ""
-  link = "https://github.com/pigLoveRabbit520"
+  link = "https://github.com/rabbitLove520"
 
 # Menu config
 # 菜单配置
