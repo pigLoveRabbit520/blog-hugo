@@ -38,7 +38,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           deploy_key: ${{ secrets.HEXO_DEPLOY_KEY }}
-          external_repository: rabbitLove520/pigLoveRabbit520.github.io
+          external_repository: rabbitLove520/rabbitLove520.github.io
           publish_branch: master
           publish_dir: ./public
           cname: pigLoveRabbit520.github.io
