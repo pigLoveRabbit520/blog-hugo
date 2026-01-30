@@ -262,7 +262,8 @@ Input
 
 如果你看到图中每个方框（Attention / FFN）后面都跟着一个 “Add & Norm”，现在你就知道它在做什么啦 😊
 
-## MLP（Multi-Layer Perceptron，多层感知机）和 FFN（Feed-Forward Network，前馈网络）这两个术语在深度学习中经常出现，它们密切相关，但在不同上下文中可能有细微差别。
+## MLP（Multi-Layer Perceptron，多层感知机）
+MLP（Multi-Layer Perceptron，多层感知机）和 FFN（Feed-Forward Network，前馈网络）这两个术语在深度学习中经常出现，它们密切相关，但在不同上下文中可能有细微差别。
 
 ### 1. **MLP（多层感知机）**
 - MLP 是最早、最经典的神经网络结构之一。
