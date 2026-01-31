@@ -3,6 +3,7 @@ title: Triton写Attention算子
 author: pigLoveRabbit
 tags: []
 categories:
+  - 深度学习
   - python
   - Triton
 date: 2025-10-26 14:00:00
