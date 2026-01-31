@@ -15,7 +15,66 @@ date: 2025-10-26 14:00:00
 简单讲，就是可以用Python写GPU算子。  
 <!-- more -->
 
+## BSND
+在深度学习特别是Transformer架构中的Attention机制里，**query、key、value** 的维度通常被描述为 **(B, S, N, D)** 或类似的格式，其中：
 
+---
+
+✅ **B** = Batch size  
+✅ **S** = Sequence length（序列长度）  
+✅ **N** = Number of attention heads（注意力头数）  
+✅ **D** = Dimension per head（每个头的维度）
+
+---
+
+### 详细解释：
+
+1. **B (Batch Size)**  
+   表示一次前向传播中处理的样本数量。比如一次处理32个句子，B=32。
+
+2. **S (Sequence Length)**  
+   表示每个样本中的 token 数量。比如一个句子有50个词，S=50。
+
+3. **N (Number of Heads)**  
+   在多头注意力（Multi-Head Attention）中，query/key/value 会被拆分成 N 个“头”，每个头独立计算注意力。比如 N=8。
+
+4. **D (Dimension per Head)**  
+   每个注意力头的向量维度。原始的 embedding 维度（如512）会被平均分配到每个头上。例如：总维度512，8个头 → D = 512 / 8 = 64。
+
+---
+
+### 举个例子：
+
+假设：
+- batch_size = 32
+- seq_len = 50
+- num_heads = 8
+- head_dim = 64
+
+那么 query 的形状就是：  
+👉 `(32, 50, 8, 64)` —— 即 **BSND**
+
+---
+
+### 为什么是 BSND？
+
+这是为了方便多头并行计算注意力。每个头独立计算 `(B, S, D)` 的 Q、K、V，然后堆叠成 `(B, S, N, D)`。最后计算完注意力后，通常会把 N 和 D 合并回原始维度：`(B, S, N*D)`。
+
+---
+
+### 注意：
+
+不同框架或论文中维度顺序可能不同，比如：
+
+- PyTorch 的 `nn.MultiheadAttention` 默认输入是 `(S, B, E)` —— 即 seq-first。
+- 但在内部实现或自定义Transformer中，常用 `(B, S, N, D)` 或 `(B, N, S, D)`。
+
+---
+
+✅ 总结：
+
+**BSND = Batch, Sequence, Number of heads, Dimension per head**  
+是多头注意力机制中 query/key/value 张量的常见四维形状表示。
 
 ## 最简单的Attention算子
 
