@@ -16,8 +16,19 @@ date: 2025-10-26 14:00:00
 简单讲，就是可以用Python写GPU算子。  
 <!-- more -->
 
-## BSND
-在深度学习特别是Transformer架构中的Attention机制里，**query、key、value** 的维度通常被描述为 **(B, S, N, D)** 或类似的格式，其中：
+## BNSD
+普通的Attention是单头注意力：  
+输入形状：[batch_size, seq_len, d_model]
+* Q: `[batch_size, seq_len, d_k]`
+* K: `[batch_size, seq_len, d_k]`
+* V: `[batch_size, seq_len, d_v]`
+
+在标准 Transformer 中通常设 d_k = d_v = d_model。
+
+但更常用是多头注意力（Multi-Head Attention）。  
+
+### 多头注意力（Multi-Head Attention）
+在深度学习特别是Transformer架构中的Attention机制里，**query、key、value** 的维度通常被描述为 **(B, N, S, D)** 或类似的格式，其中：
 
 ---
 
@@ -44,38 +55,25 @@ date: 2025-10-26 14:00:00
 
 ---
 
-### 举个例子：
+### 示例（BERT-base）
 
 假设：
 - batch_size = 32
-- seq_len = 50
-- num_heads = 8
-- head_dim = 64
+- seq_len = 128
+- d_model = 768
+- num_heads = 12
+- head_dim = 768 // 12 = 64
 
 那么 query 的形状就是：  
-👉 `(32, 50, 8, 64)` —— 即 **BSND**
+👉 `[32, 12, 128, 64]` —— 即 **BNSD**
 
 ---
 
-### 为什么是 BSND？
-
-这是为了方便多头并行计算注意力。每个头独立计算 `(B, S, D)` 的 Q、K、V，然后堆叠成 `(B, S, N, D)`。最后计算完注意力后，通常会把 N 和 D 合并回原始维度：`(B, S, N*D)`。
-
----
-
-### 注意：
-
-不同框架或论文中维度顺序可能不同，比如：
-
-- PyTorch 的 `nn.MultiheadAttention` 默认输入是 `(S, B, E)` —— 即 seq-first。
-- 但在内部实现或自定义Transformer中，常用 `(B, S, N, D)` 或 `(B, N, S, D)`。
+### 为什么是 BNSD？
+BNSD（[Batch, Num_heads, Seq_len, Head_dim]）成为主流布局的核心原因在于 它与注意力计算的数学本质和 GPU 硬件执行模型高度匹配。
 
 ---
 
-✅ 总结：
-
-**BSND = Batch, Sequence, Number of heads, Dimension per head**  
-是多头注意力机制中 query/key/value 张量的常见四维形状表示。
 
 ## 最简单的Attention算子
 
